@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Load data first, shared state/helpers next, then charts. school-programs.js starts the initial render. -->
+    <meta charset="UTF-8" />
+    <link rel="icon" href="data:," />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>College &amp; Career · Costs, Earnings &amp; Hiring</title>
+    <meta
+      name="description"
+      content="Compare U.S. colleges and majors. Explore costs, earnings and hiring trends in four linked views."
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="vendor/d3.min.js"></script>
+    <script defer src="colors.js"></script>
+    <script defer src="states.js"></script>
+    <script defer src="data.js"></script>
+    <script defer src="pseo-data.js"></script>
+    <script defer src="employment.js"></script>
+    <script defer src="school-program-data.js"></script>
+    <script defer src="graduate-earnings-data.js"></script>
+    <script defer src="source-manifest.js"></script>
+    <script defer src="ui-state.js"></script>
+    <script defer src="app.js"></script>
+    <script defer src="program-income.js"></script>
+    <script defer src="industry-destinations-data.js"></script>
+    <script defer src="industry-pay-data.js"></script>
+    <script defer src="cpi-data.js"></script>
+    <script defer src="quarterly-pay-data.js"></script>
+    <script defer src="hiring-data.js"></script>
+    <script defer src="industry-pay.js"></script>
+    <script defer src="hiring.js"></script>
+    <script defer src="school-programs.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="College and Career home"
+          ><span class="brand-symbol">c<span>↗</span></span
+          >College<span class="brand-light">&amp; Career</span
+          ><span class="brand-caption">U.S. COLLEGE DATA</span></a
+        >
+        <div class="top-actions">
+          <span class="source-badge"><i></i> ONLINE</span
+          ><button id="method-button" class="quiet">Data notes <span>↗</span></button
+          ><button
+            id="fullscreen"
+            class="icon-button"
+            aria-label="Toggle fullscreen"
+            title="Toggle fullscreen"
+          >
+            ⛶
+          </button>
+        </div>
+      </header>
+      <section class="overview" aria-label="Overview">
+        <div class="intro">
+          <h1>Compare colleges and majors.</h1>
+          <p>
+            Explore costs, earnings and hiring trends.
+          </p>
+        </div>
+        <div class="kpis">
+          <div class="kpi">
+            <span>Colleges in view</span><strong id="kpi-total">1,725</strong
+            ><small>Bachelor’s main campuses</small>
+          </div>
+          <div class="kpi">
+            <span>With cost &amp; earnings</span><strong id="kpi-paired">88.1<span>%</span></strong
+            ><small id="pair-note">1,520 / 1,725 institutions</small>
+          </div>
+          <div class="kpi">
+            <span>With graduate destinations</span><strong id="kpi-flows">454</strong
+            ><small id="flow-kpi-note">For the selected cohort and field</small>
+          </div>
+        </div>
+      </section>
+      <section class="toolbar" aria-label="Global filters">
+        <div class="segmented" aria-label="Institution type">
+          <button class="active" data-type="all" aria-pressed="true">All types</button
+          ><button data-type="Public" aria-pressed="false"><i class="dot public"></i>Public</button
+          ><button data-type="Private nonprofit" aria-pressed="false">
+            <i class="dot nonprofit"></i>Private nonprofit</button
+          ><button data-type="Private for-profit" aria-pressed="false">
+            <i class="dot profit"></i>Private for-profit
+          </button>
+        </div>
+        <label class="select-wrap"
+          ><span>State</span
+          ><select id="state-filter" aria-label="State filter">
+            <option value="all">All states + DC</option>
+          </select></label
+        >
+        <label class="select-wrap size-filter"
+          ><span>Size</span
+          ><select id="size-filter" aria-label="Undergraduate size filter">
+            <option value="all">All sizes</option>
+            <option value="&lt;2,000">Small &lt; 2,000</option>
+            <option value="2,000–9,999">Medium 2,000–9,999</option>
+            <option value="≥10,000">Large ≥ 10,000</option>
+            <option value="Unknown">Unknown size</option>
+          </select></label
+        >
+        <div class="toolbar-spacer"></div>
+        <button id="story-button" class="story-button">↗ Stony Brook demo</button
+        ><button
+          id="reset"
+          class="reset-button"
+          title="Restore all institutions and default charts"
+        >
+          ↺ Reset
+        </button>
+      </section>
+      <main class="dashboard" aria-label="Four linked views">
+        <section class="panel map-panel" aria-labelledby="map-title">
+          <div class="panel-head">
+            <div>
+              <span class="panel-no">01</span>
+              <h2 id="map-title">Cost across the map</h2>
+              <span class="panel-subtitle">By state</span>
+            </div>
+            <select id="map-metric" aria-label="Map metric">
+              <option value="net_price">Net price</option>
+              <option value="earnings_10yr">10-year earnings</option>
+              <option value="completion_rate">Completion rate</option>
+              <option value="federal_debt">Federal debt</option>
+              <option value="employment">Work regions</option>
+            </select>
+          </div>
+          <div class="chart map-chart">
+            <svg
+              id="map-svg"
+              role="group"
+              aria-label="US map of median institution metrics by state"
+            ></svg>
+            <div class="map-legend">
+              <span id="map-min"></span>
+              <div id="map-gradient"></div>
+              <span id="map-max"></span><span class="no-data"><i></i>No data</span>
+            </div>
+            <div id="map-insight" class="map-insight"></div>
+          </div>
+          <div class="panel-foot">
+            <span>Click a state to filter; click again to clear</span
+            ><span id="map-foot">Institution medians · Unweighted</span>
+          </div>
+        </section>
+        <section class="panel scatter-panel" aria-labelledby="scatter-title">
+          <div class="panel-head">
+            <div>
+              <span class="panel-no">02</span>
+              <h2 id="scatter-title">Cost and long-term earnings</h2>
+            </div>
+            <span class="mini-badge" id="scatter-count">1,520 points</span>
+          </div>
+          <div class="chart">
+            <svg
+              id="scatter-svg"
+              role="group"
+              aria-label="Net price versus earnings ten years after entry. Drag or click. Keyboard users: Find institution or use the school list in panel 3."
+            ></svg>
+            <div id="scatter-empty" class="empty-state" hidden>
+              <b>No plottable institutions in this scope</b
+              ><span
+                >Both price and earnings are required. The population count still includes missing
+                records.</span
+              >
+            </div>
+          </div>
+          <div class="panel-foot">
+            <span>Drag to select · Click a dot to select a school</span>
+            <div class="legend-inline">
+              <span><i class="dot public"></i>Public</span
+              ><span><i class="dot nonprofit"></i>Nonprofit</span
+              ><span><i class="dot profit"></i>For-profit</span
+              ><span class="size-key">○ Undergrad size</span>
+            </div>
+          </div>
+        </section>
+        <section class="panel programs-panel" aria-labelledby="programs-title">
+          <div class="panel-head"><div><span class="panel-no">03</span><h2 id="programs-title">School program size and earnings</h2></div>
+            <select id="program-view" aria-label="School program chart view"><option value="mix">Size and earnings</option><option value="income">Income ranges</option></select></div>
+          <div class="program-controls">
+            <select id="program-school" aria-label="School for program comparison"></select>
+            <select id="program-grain" aria-label="Program detail level"><option value="2">Broad fields</option><option value="4">Detailed programs</option></select>
+            <select id="program-item" aria-label="Select a program to link employment"></select>
+          </div>
+          <div class="program-summary"><span id="program-total"></span><div id="program-color-key">Median <span class="program-gradient"></span> $0–150k+ <i></i>N/A</div></div>
+          <div class="chart"><svg id="programs-svg" role="group" aria-label="School-specific program size and published earnings linked to employment flows"></svg>
+            <div id="programs-empty" class="empty-state" hidden><b id="programs-empty-title"></b><span id="programs-empty-note"></span></div></div>
+          <div class="panel-foot"><span id="program-source-note"></span><div id="program-pages" hidden><button id="program-prev" aria-label="Previous programs">←</button><span id="program-page"></span><button id="program-next" aria-label="Next programs">→</button></div><span id="program-link-note"></span></div>
+        </section>
+        <section class="panel industry-pay-panel" aria-labelledby="industry-pay-title">
+          <div class="panel-head"><div><span class="panel-no">04</span><h2 id="industry-pay-title">Industry pay benchmarks</h2></div>
+            <select id="industry-pay-mode" aria-label="Industry pay or recent hiring demand">
+<option value="pay-growth">Pay growth · YoY</option>
+<option value="hiring">Hiring demand</option></select></div>
+          <div class="industry-pay-controls"><span id="industry-pay-scope"></span><label class="cohort-control"><span>Graduates</span><select id="pseo-snapshot" aria-label="Graduates and years after graduation"></select></label></div>
+          <div id="industry-coverage-line" aria-live="polite"></div>
+          <div id="industry-pay-legend" aria-label="Major employment industries and their shares"></div>
+          <div class="chart"><svg id="industry-pay-svg" role="group" aria-label="National yearly industry wages with line width proportional to selected program employment share"></svg>
+            <div id="industry-pay-empty" class="empty-state" hidden><b id="industry-pay-empty-title"></b><span id="industry-pay-empty-note"></span></div></div>
+          <div class="panel-foot"><span id="industry-pay-source"></span><span id="industry-pay-coverage"></span></div>
+        </section>
+      </main>
+      <section class="selection-bar" aria-label="Current selection">
+        <div>
+          <span class="selection-indicator"></span
+          ><b id="selection-count" aria-live="polite">In view: 1,725 institutions</b
+          ><nav id="scope-trail" aria-label="Current scope and program"></nav><span id="selection-description" class="sr-only" aria-live="polite"></span
+          ><button id="clear-selection" class="text-button" hidden>Clear choices ×</button>
+        </div>
+        <div class="school-search">
+          <label for="school-search">Find institution</label
+          ><input
+            id="school-search"
+            list="school-options"
+            placeholder="e.g. Stony Brook"
+            autocomplete="off"
+          /><datalist id="school-options"></datalist
+          ><button id="open-school" class="text-button">Select</button>
+        </div>
+      </section>
+      <footer>
+        <span>Undergraduate institutions · 50 states + DC · 1,725 main campuses</span
+        ><span
+          >Scorecard: after entry · PSEO: after graduation
+          <button id="source-link">Methods & sources ↗</button></span
+        >
+      </footer>
+    </div>
+    <div id="tooltip" role="tooltip" hidden></div>
+    <div id="toast" role="status" hidden></div>
+  </body>
+</html>

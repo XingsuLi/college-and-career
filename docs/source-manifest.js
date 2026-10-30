@@ -1,0 +1,81 @@
+window.SOURCE_META = {
+  "buildDate": "2026-10-30",
+  "awardYear": "2024\u201325",
+  "awardRelease": "C2025_A provisional",
+  "defaultSnapshot": "2019:1",
+  "pseoRelease": "2026Q2 / V4.14.1",
+  "pseoDollarYear": 2023,
+  "payDollarYear": 2024,
+  "annualStart": 2023,
+  "annualEnd": 2025,
+  "quarterLatest": "2026-Q1",
+  "mapPeriods": {
+    "net_price": "Net price 2024\u201325",
+    "earnings_10yr": "Earnings 2022/23 \u00b7 2024 USD",
+    "completion_rate": "Fall 2019 entrants \u00b7 150% time",
+    "federal_debt": "Debt FY2024\u201325"
+  },
+  "sources": [
+    {
+      "source": "IPEDS",
+      "file": "C2025_A.zip",
+      "url": "https://nces.ed.gov/ipeds/complete-data-files/C2025_A.zip",
+      "release": "2025\u201326 Fall provisional",
+      "reference_period": "2024\u201325 awards",
+      "sha256": "555c6522ccf011d54b06520b128badb8558aba3d0038c97f231f5efaa7161183"
+    },
+    {
+      "source": "QCEW quarterly",
+      "file": "qcew-2026-q1-us.csv",
+      "url": "https://data.bls.gov/cew/data/api/2026/1/area/US000.csv",
+      "release": "2026 Q1 preliminary",
+      "reference_period": "2020 Q1\u20132026 Q1",
+      "sha256": "01fcd2cdd86f66d70b569286c5a88bc8558b05dc66bdb7470963e59ac173c3a8"
+    },
+    {
+      "source": "CPI-U",
+      "file": "cpi-monthly-2020-2026.json",
+      "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0?startyear=2020&endyear=2026",
+      "reference_period": "2020\u20132026 monthly; quarter means require 3 months",
+      "dollar_year": 2024,
+      "sha256": "81b57df5f557121fc5c25192458eae4388ddb58f4f98420b1ba9f71cf65b6ce2"
+    },
+    {
+      "source": "PSEO",
+      "url": "https://lehd.ces.census.gov/data/pseo_documentation.html",
+      "release": "2026Q2",
+      "reference_period": "Three-year graduation cohorts through 2019\u201321",
+      "dollar_year": 2023
+    },
+    {
+      "source": "College Scorecard",
+      "url": "https://collegescorecard.ed.gov/data/",
+      "release": "2026-10-15",
+      "reference_period": "Metric-specific; unchanged current release"
+    },
+    {
+      "source": "Indeed Hiring Lab",
+      "release": "Public snapshot retrieved 2026-10-30",
+      "reference_period": "Observed Fridays, 2023-01-06 through 2026-10-23",
+      "url": "https://github.com/hiring-lab/job_postings_tracker",
+      "license": "CC BY 4.0",
+      "source_hashes": "data-audit/hiring-downloads.json"
+    },
+    {
+      "source": "CPI-U quarterly reference update",
+      "series": "CUUR0000SA0",
+      "file": "cpi-monthly-2022-2026.json",
+      "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0?startyear=2022&endyear=2026",
+      "reference_period": "2022-01 through 2026-09; complete three-month quarter averages",
+      "retrieved": "2026-10-30",
+      "sha256": "e13ca9e871424b09b609fd7e9b47eee488ed8504b5ad070272a8ee9f107f4c2d",
+      "quarter_latest": "2026-Q3",
+      "missing": "2025 Q4 remains null; visual line connects adjacent observed quarters without a missing-quarter node"
+    }
+  ],
+  "rawAnnualStart": 2015,
+  "displayWindow": "2023 Q1\u20132026 Q1",
+  "hiringLatest": "2026-10-23",
+  "cpiQuarterLatest": "2026-Q3",
+  "cpiMonthlyLatest": "2026-09"
+};

@@ -1,0 +1,256 @@
+{
+  "schema_version": "2.0",
+  "release": "2026-10-15",
+  "title": "CollegeScope · College Costs, Outcomes, and Data Coverage",
+  "default_scope": "CURROPER=1; PREDDEG=3; MAIN=1; 50 states + DC. No metric completeness filter.",
+  "metric_definitions": {
+    "net_price": {
+      "source_fields": [
+        "NPT4_PUB",
+        "NPT4_PRIV"
+      ],
+      "unit": "USD",
+      "official": {
+        "NPT4_PUB": {
+          "description": "Average net price for Title IV institutions (public institutions)",
+          "source": "IPEDS",
+          "notes": "The average annual total cost of attendance (CostT4_A, CostT4_P), including tuition and fees, books and supplies, and living expenses, minus the average grant/scholarship aid. It is calculated for all full-time, first-time, degree/certificate-seeking undergraduates who receive Title IV aid. It is included in the IPEDS Student Financial Aid component. Separate metrics are calculated for public institutions and private institutions. For public institutions, this metric is limited to full-time, first-time, degree/certificate-seeking undergraduates who pay in-state tuition and receive Title IV aid. For private institutions, it includes all full-time, first-time, degree/certificate-seeking undergraduates who receive Title IV aid. The total cost of attendance depends on whether full-time, first-time, degree/certificate-seeking undergraduates live on campus, off campus (not with family), or off campus (with family). For academic-year institutions, net price represents an average of all programs and includes only full-time, first-time, degree/certificate-seeking undergraduates who first enrolled in the fall term. For non-academic-year institutions (program or continuous enrollment), net price represents the program with the largest enrollment at the institution and it includes full-time, first-time, degree/certificate-seeking undergraduates who first enrolled at any time during the academic year. For programs less than 1 year in length (see LPROGRAM), this represents the net price for the full program. This metric is not available prior to the 2009-10 academic year.",
+          "cohort": "AcadYr 2024-25, reported in IPEDS DCY2025-26",
+          "merged_file": "2025_26"
+        },
+        "NPT4_PRIV": {
+          "description": "Average net price for Title IV institutions (private for-profit and nonprofit institutions)",
+          "source": "IPEDS",
+          "notes": "ibid",
+          "cohort": "AcadYr 2024-25, reported in IPEDS DCY2025-26",
+          "merged_file": "2025_26"
+        }
+      },
+      "label_en": "Average net price for Title IV undergraduates"
+    },
+    "earnings_10yr": {
+      "source_fields": [
+        "MD_EARN_WNE_P10"
+      ],
+      "unit": "USD_2024",
+      "official": {
+        "MD_EARN_WNE_P10": {
+          "description": "Median earnings of students working and not enrolled 10 years after entry",
+          "source": "Treasury",
+          "notes": null,
+          "cohort": "Treasury AY2011-12, AY2012-13 pooled cohort measured in CY2022, CY2023, inflation adjusted to 2024 dollars",
+          "merged_file": "2022_23"
+        }
+      },
+      "label_en": "Median earnings 10 years after entry, working and not enrolled"
+    },
+    "completion_rate": {
+      "source_fields": [
+        "C150_4"
+      ],
+      "unit": "proportion",
+      "official": {
+        "C150_4": {
+          "description": "Completion rate for first-time, full-time students at four-year institutions (150% of expected time to completion)",
+          "source": "IPEDS",
+          "notes": "The proportion of full-time, first-time, degree/certificate-seeking undergraduates who completed a degree or certificate at the institution within 150 percent of normal time, calculated from the IPEDS Graduation Rates component. Separate metrics are calculated for 4-year institutions and less-than-4-year institutions. This metric is calculated as the number of full-time, first-time, degree/certificate-seeking undergraduates who completed a degree or certificate divided by the number of full-time, first-time, degree/certificate-seeking undergraduates in the corresponding completion rate cohort (D150_4, D150_L4). For full-time, first-time, bachelor's degree-seeking undergraduates, 150 percent of normal time is typically 6 years, and for full-time, first-time, associate's degree-seeking undergraduates it is typically 3 years. For full-time, first-time, certificate-seeking undergraduates, the normal time period varies by the length of the program (for example, 9 months for a certificate with a normal completion time of 6 months). Proportions are expressed as decimals rounded to four decimal places, so, for example, 0.1234 equals 12.34 percent. Pooled figures include two cohorts of students.",
+          "cohort": "Fall 2019 or AcadYr 2019-20 cohort (differs by institutional calendar), reported in IPEDS DCY2025-26",
+          "merged_file": "2025_26"
+        }
+      },
+      "label_en": "Completion within 150% of normal time, first-time full-time students at four-year institutions"
+    },
+    "federal_debt": {
+      "source_fields": [
+        "GRAD_DEBT_MDN"
+      ],
+      "unit": "USD",
+      "official": {
+        "GRAD_DEBT_MDN": {
+          "description": "The median debt for students who have completed",
+          "source": "NSLDS",
+          "notes": null,
+          "cohort": "NSLDS FY2024, FY2025 pooled cohorts",
+          "merged_file": "2024_25"
+        }
+      },
+      "label_en": "Median institutional federal borrowing among undergraduate completers"
+    },
+    "admission_rate": {
+      "source_fields": [
+        "ADM_RATE"
+      ],
+      "unit": "proportion",
+      "official": {
+        "ADM_RATE": {
+          "description": "Admission rate",
+          "source": "IPEDS",
+          "notes": null,
+          "cohort": "Fall 2024, reported in IPEDS DCY2024-25",
+          "merged_file": "2024_25"
+        }
+      },
+      "label_en": "Admission rate"
+    },
+    "undergrad_size": {
+      "source_fields": [
+        "UGDS"
+      ],
+      "unit": "students",
+      "official": {
+        "UGDS": {
+          "description": "Enrollment of undergraduate certificate/degree-seeking students",
+          "source": "IPEDS",
+          "notes": "Not available in 2000-2001 datafile",
+          "cohort": "Fall 2024, reported in IPEDS DCY2024-25",
+          "merged_file": "2024_25"
+        }
+      },
+      "label_en": "Undergraduate certificate/degree enrollment"
+    }
+  },
+  "program_definitions": {
+    "IPEDSCOUNT1": {
+      "description": "Number of awards to all students in year 1 of the pooled debt cohort",
+      "source": "IPEDS",
+      "notes": null,
+      "cohort": "AY2022-23 reported in IPEDS DCY2023-24"
+    },
+    "IPEDSCOUNT2": {
+      "description": "Number of awards to all students in year 2 of the pooled debt cohort",
+      "source": "IPEDS",
+      "notes": "Shown/used on consumer website.",
+      "cohort": "AY2023-24 reported in IPEDS DCY2024-25"
+    },
+    "EARN_MDN_1YR": {
+      "description": "Median earnings of graduates working and not enrolled 1 year after completing",
+      "source": "Treasury",
+      "notes": null,
+      "cohort": "Treasury AY2020-21, AY2021-22 pooled earnings cohort measured in CY2022, CY2023, inflation adjusted to 2024 dollars"
+    },
+    "EARN_MDN_4YR": {
+      "description": "Median earnings of graduates working and not enrolled 4 years after completing",
+      "source": "Treasury",
+      "notes": "Shown/used on consumer website.",
+      "cohort": "Treasury AY2017-2018, AY2018-2019 pooled earnings cohort measured in CY2022, CY2023, inflation adjusted to 2024 dollars"
+    },
+    "EARN_MDN_5YR": {
+      "description": "Median earnings of graduates working and not enrolled 5 years after completing",
+      "source": "Treasury",
+      "notes": null,
+      "cohort": "Treasury AY2016-2017, AY2017-2018 pooled earnings cohort measured in CY2022, CY2023, inflation adjusted to 2024 dollars"
+    },
+    "EARN_MDN_7YR": {
+      "description": "Median earnings of graduates working and not enrolled 7 years after completing",
+      "source": null,
+      "notes": null,
+      "cohort": "Treasury AY2014-2015, AY2015-2016 pooled earnings cohort measured in CY2022, CY2023, inflation adjusted to 2024 dollars"
+    },
+    "DEBT_ALL_STGP_EVAL_MDN": {
+      "description": "Median Stafford and Grad PLUS loan debt disbursed at this institution",
+      "source": "NSLDS",
+      "notes": "Shown/used on consumer website.",
+      "cohort": "NSLDS pooled AY2022-23, AY2023-24 cohort"
+    },
+    "DEBT_ALL_STGP_ANY_MDN": {
+      "description": "Median Stafford and Grad PLUS loan debt disbursed at all institutions",
+      "source": "NSLDS",
+      "notes": "Shown/used on consumer website.",
+      "cohort": "NSLDS pooled AY2022-23, AY2023-24 cohort"
+    },
+    "EARN_COUNT_WNE_1YR": {
+      "description": "Number of graduates working and not enrolled 1 year after completing",
+      "source": "Treasury",
+      "notes": null,
+      "cohort": "Treasury AY2020-21, AY2021-22 pooled earnings cohort measured in CY2022, CY2023"
+    },
+    "EARN_COUNT_WNE_4YR": {
+      "description": "Number of graduates working and not enrolled 4 years after completing",
+      "source": "Treasury",
+      "notes": null,
+      "cohort": "Treasury AY2017-2018, AY2018-2019 pooled earnings cohort measured in CY2022, CY2023"
+    }
+  },
+  "status_definitions": {
+    "available": "Finite value; genuine zero is preserved",
+    "privacy_suppressed": "PS/PrivacySuppressed; never reconstructed or set to zero",
+    "missing": "NA/NULL/blank; no cause inferred",
+    "not_applicable": "C150_4 at non-four-year institutions, or OPENADMP=1 and ADM_RATE missing",
+    "invalid": "Unparseable value; data build fails"
+  },
+  "warnings": [
+    "Institution metrics describe undergraduate costs and outcomes, not computing master’s tuition, earnings, admissions, or ROI.",
+    "Ten-year earnings are measured after entry, including non-completers, among eligible federally aided individuals working and not enrolled.",
+    "Net price covers first-time full-time Title IV undergraduates; public institutions include only students paying in-state tuition.",
+    "Price, earnings, completion, debt and admissions use different cohorts and periods, not the same students’ inputs and outcomes.",
+    "Debt covers relevant undergraduate federal loans at the institution among borrowers who completed; excludes Parent PLUS, Perkins and private loans.",
+    "Earnings are in 2024 dollars and net price is for 2024–25; do not compute ROI, payback time or composite rankings.",
+    "NSLDS/Treasury results pool branches under OPEID6. MAIN=1 avoids duplicate weighting; map location is the main campus, not employment location.",
+    "State/type aggregates are unweighted medians of available institution values, not statewide student medians. Show available and total counts.",
+    "Program grain is OPEID6+CIPCODE+CREDLEV; IPEDSCOUNT is awards at the source UNITID. No fuzzy matching of unmatched records.",
+    "All charts share UNITID selection. Check plottability per view and preserve missing records in coverage denominators.",
+    "Official errata describe historical entry-horizon mislabeling and four-year completion earnings issues; this does not prove all current P10 values error-free."
+  ],
+  "four_views": [
+    "institution/work-region map",
+    "cost–earnings scatterplot",
+    "Program award shares and published annual income in aligned rows",
+    "employment-share-weighted national industry pay"
+  ],
+  "program_chart": {
+    "school_key": "UNITID / exact OPEID8 crosswalk",
+    "count": "IPEDS C2025_A provisional, AWLEVEL 5, MAJORNUM 1; degree awards, not enrollment",
+    "size_year": "2024–25",
+    "income": "School-specific PSEO P25, P50, P75; constant 2023 USD",
+    "grain": [
+      "CIP2",
+      "CIP4"
+    ],
+    "employment_grain": "CIP2",
+    "missing": "No fallback or reconstruction",
+    "multiple_schools": "Sum program awards and show scope shares; do not pool school income percentiles.",
+    "renderer": "Treemap: area is bachelor awards; one-school color is published median income; income-only intervals remain available",
+    "pagination": "Treemap shows all fields; income intervals paginate six rows",
+    "interaction": "Select broad fields or detailed programs without drilldown"
+  },
+  "industry_pay": {
+    "join_key": "School OPEID8/UNITID, two-digit CIP, cohort, horizon -> NAICS sector",
+    "fine_program": "Employment uses two-digit parent field",
+    "share_denominator": "All positive published employment counts, all industries and all work regions",
+    "line_width_pixels": "18 * exact employment share",
+    "rank": "Top five by employment count, not renormalized",
+    "wages": "National private-sector QCEW average annual pay, 2015–2025",
+    "inflation": "Annual CPI-U for annual data; complete three-month CPI means for quarterly data. Q4 2025 real values unavailable.",
+    "region_filter": "Does not change explicitly all-region destination weights",
+    "individual_income_estimate": false,
+    "quarterly": "2020 Q1–2026 Q1 source weekly pay; displayed from 2021 Q1 with same-quarter real YoY"
+  },
+  "scope_aggregation": {
+    "priority": [
+      "explicit school",
+      "brushed institution subset",
+      "institution state",
+      "full institution sample"
+    ],
+    "default": "United States, 1725 eligible institutions",
+    "program_size": "Sum first-major bachelor awards across exact scope IDs",
+    "program_share": "Program awards / all awards in scope",
+    "aggregate_color": "Award share, fixed 0–30%+ scale",
+    "school_color": "Published school-specific PSEO median",
+    "pooled_income_medians": false,
+    "industry_weights": "Sum published destination counts across scope institutions, then divide by full published scope total"
+  },
+  "source_manifest": "source-manifest.js",
+  "hiring_demand": {
+    "source": "Indeed Hiring Lab",
+    "latest": "2026-10-23",
+    "unit": "Seasonally adjusted total-job-postings index; 2020-02-01=100",
+    "sampling": "Exact Fridays plus latest source date; seven-day trailing-average source",
+    "occupations": "Related national benchmarks selected by reviewed CIP rules; not alumni destinations",
+    "state_reference": "Published state all-jobs index; never state-by-occupation",
+    "lines": "Equal 2px widths; no PSEO weights",
+    "cohort": "Alumni cohort affects panel three program income, not hiring",
+    "mapping": "source/hiring-mapping.json",
+    "source_audit": "data-audit/hiring-downloads.json"
+  }
+}

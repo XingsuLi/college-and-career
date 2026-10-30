@@ -1,0 +1,13 @@
+{
+  "checked": "2026-10-30",
+  "source": "https://www.bls.gov/cew/release-calendar.htm",
+  "latest_available_quarter": "2026-Q1",
+  "next_quarter_release": "2026-Q2 scheduled 2026-12-02",
+  "2026_Q3_release": "2027; date to be determined",
+  "comparison_cutoff": "2026-Q1",
+  "changed_source_files": [
+    "source/industry-pay.js",
+    "source/app.js"
+  ],
+  "raw_data_unchanged": true
+}

@@ -1,0 +1,191 @@
+{
+  "description": "Reviewed related-occupation benchmarks. Editorial links, not an official CIP-to-Indeed crosswalk or observed graduate destinations. Lists are illustrative, not exhaustive. No probabilities or weights. Exact four-digit rules take priority; otherwise use the explicitly labeled two-digit family. Unmapped fields show overall references only.",
+  "sources": [
+    "https://nces.ed.gov/ipeds/cipcode/Files/CIP2020_SOC2018_Crosswalk.xlsx",
+    "https://github.com/hiring-lab/job_postings_tracker/blob/master/sector-job-title-examples.csv"
+  ],
+  "taxonomy_note": "Exact series labels are validated against current raw CSV. The publisher job-title examples contain older labels; they are context only and are not automatically renamed into current series.",
+  "broad": {
+    "03": [
+      "Scientific Research & Development"
+    ],
+    "04": [
+      "Architecture"
+    ],
+    "09": [
+      "Media & Communications",
+      "Marketing"
+    ],
+    "10": [
+      "Media & Communications",
+      "Arts & Entertainment"
+    ],
+    "11": [
+      "Software Development",
+      "Data & Analytics",
+      "IT Systems & Solutions"
+    ],
+    "12": [
+      "Food Preparation & Service",
+      "Hospitality & Tourism"
+    ],
+    "13": [
+      "Education & Instruction",
+      "Childcare"
+    ],
+    "14": [
+      "Civil Engineering",
+      "Electrical Engineering",
+      "Mechanical Engineering"
+    ],
+    "15": [
+      "Industrial Engineering",
+      "Installation & Maintenance",
+      "Production & Manufacturing"
+    ],
+    "19": [
+      "Community & Social Service",
+      "Childcare"
+    ],
+    "22": [
+      "Legal"
+    ],
+    "23": [
+      "Media & Communications"
+    ],
+    "26": [
+      "Scientific Research & Development",
+      "Medical Technician"
+    ],
+    "27": [
+      "Data & Analytics",
+      "Scientific Research & Development"
+    ],
+    "39": [
+      "Community & Social Service"
+    ],
+    "40": [
+      "Scientific Research & Development"
+    ],
+    "41": [
+      "Scientific Research & Development",
+      "Medical Technician"
+    ],
+    "42": [
+      "Therapy",
+      "Community & Social Service"
+    ],
+    "43": [
+      "Security & Public Safety"
+    ],
+    "44": [
+      "Community & Social Service"
+    ],
+    "45": [
+      "Social Science"
+    ],
+    "46": [
+      "Construction"
+    ],
+    "47": [
+      "Installation & Maintenance"
+    ],
+    "48": [
+      "Production & Manufacturing"
+    ],
+    "49": [
+      "Aviation",
+      "Driving",
+      "Logistic Support"
+    ],
+    "50": [
+      "Arts & Entertainment",
+      "Media & Communications"
+    ],
+    "51": [
+      "Nursing",
+      "Medical Technician",
+      "Therapy"
+    ],
+    "52": [
+      "Banking & Finance",
+      "Accounting",
+      "Marketing"
+    ],
+    "54": [
+      "Social Science"
+    ]
+  },
+  "fine": {
+    "11.04": [
+      "Data & Analytics",
+      "IT Systems & Solutions",
+      "IT Infrastructure, Operations & Support"
+    ],
+    "11.07": [
+      "Software Development",
+      "Data & Analytics",
+      "IT Systems & Solutions"
+    ],
+    "14.08": [
+      "Civil Engineering"
+    ],
+    "14.09": [
+      "Electrical Engineering",
+      "Software Development"
+    ],
+    "14.10": [
+      "Electrical Engineering"
+    ],
+    "14.19": [
+      "Mechanical Engineering"
+    ],
+    "14.35": [
+      "Industrial Engineering"
+    ],
+    "30.08": [
+      "Software Development",
+      "Data & Analytics"
+    ],
+    "30.31": [
+      "Software Development"
+    ],
+    "30.71": [
+      "Data & Analytics",
+      "Software Development"
+    ],
+    "51.02": [
+      "Therapy"
+    ],
+    "51.06": [
+      "Dental"
+    ],
+    "51.09": [
+      "Medical Technician"
+    ],
+    "51.20": [
+      "Pharmacy"
+    ],
+    "51.23": [
+      "Therapy"
+    ],
+    "51.38": [
+      "Nursing"
+    ],
+    "52.03": [
+      "Accounting"
+    ],
+    "52.08": [
+      "Banking & Finance",
+      "Insurance"
+    ],
+    "52.14": [
+      "Marketing"
+    ],
+    "52.02": [
+      "Management",
+      "Project Management",
+      "Human Resources"
+    ]
+  }
+}

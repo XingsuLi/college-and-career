@@ -1,0 +1,37 @@
+{
+  "source": {
+    "source": "CPI-U quarterly reference update",
+    "series": "CUUR0000SA0",
+    "file": "cpi-monthly-2022-2026.json",
+    "url": "https://api.bls.gov/publicAPI/v2/timeseries/data/CUUR0000SA0?startyear=2022&endyear=2026",
+    "reference_period": "2022-01 through 2026-09; complete three-month quarter averages",
+    "retrieved": "2026-10-30",
+    "sha256": "e13ca9e871424b09b609fd7e9b47eee488ed8504b5ad070272a8ee9f107f4c2d",
+    "quarter_latest": "2026-Q3",
+    "missing": "2025 Q4 remains null; visual line connects adjacent observed quarters without a missing-quarter node"
+  },
+  "recent": [
+    {
+      "quarter": "2026-Q1",
+      "quarter_mean": 327.4166666666667,
+      "prior_year_mean": 318.85066666666665,
+      "yoy_percent": 2.686524099055787
+    },
+    {
+      "quarter": "2026-Q2",
+      "quarter_mean": 334.0316666666667,
+      "prior_year_mean": 321.60699999999997,
+      "yoy_percent": 3.8633072870511986
+    },
+    {
+      "quarter": "2026-Q3",
+      "quarter_mean": 335.27933333333334,
+      "prior_year_mean": 323.9413333333334,
+      "yoy_percent": 3.500016463886446
+    }
+  ],
+  "missing_quarter_value": null,
+  "wage_series_sha256_before": "46a1d52f13dec7b44d0167aeddfc14ef73a75e8c0a315900c93309443982b134",
+  "wage_series_sha256_after": "46a1d52f13dec7b44d0167aeddfc14ef73a75e8c0a315900c93309443982b134",
+  "existing_cpi_quarters_match_official": true
+}
