@@ -57,3 +57,9 @@ For inspection in browser developer tools, see `collegeScopeSnapshot`,
 
 To update the site, edit `docs/`, test with a local static server, then commit
 and push. GitHub Pages serves that folder directly.
+
+
+`dataSources` in `app.js` supplies the six links opened by the header button.
+The source list reuses the compact popup container with interactive anchors;
+Escape and outside click close it. Chart hovers reset the source-open state.
+The shell has five grid rows and the market panel has no footer row.

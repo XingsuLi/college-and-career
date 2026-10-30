@@ -50,3 +50,8 @@ GitHub Pages publishes the `docs/` folder. Commit and push changes to update the
 - D3 and map geometry: licenses retained in `docs/vendor/`.
 
 Source periods and hashes are in `docs/source-manifest.js` and [provenance/](provenance/).
+
+
+The header's **Data sources** button opens six primary source links. The
+graduate-destination KPI, page footer and lower market-chart notes are removed.
+Quarter ticks and years remain visible in the fixed four-panel layout.

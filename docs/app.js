@@ -96,8 +96,11 @@ function tooltipRow(label, value) {
 }
 function showTooltip(event, html, variant = "chart") {
   const el = getElement("tooltip");
+  if (variant !== "notes") getElement("method-button")?.setAttribute("aria-expanded", "false");
   el.classList.toggle("data-notes", variant === "notes");
   el.setAttribute("role","tooltip");
+  el.removeAttribute("aria-label");
+  el.removeAttribute("tabindex");
   el.style.pointerEvents="none";
   el.innerHTML = html;
   const bounds=event.currentTarget?.getBoundingClientRect?.();
@@ -110,7 +113,7 @@ function showTooltip(event, html, variant = "chart") {
 }
 function hideTooltip() {
   getElement("tooltip").hidden = true;
-  for(const id of ["method-button","source-link"])getElement(id)?.setAttribute("aria-expanded","false");
+  getElement("method-button")?.setAttribute("aria-expanded","false");
 }
 let toastTimer;
 function toast(text) {
@@ -160,9 +163,6 @@ function render() {
       : "—") + "<span>%</span>";
   getElement("pair-note").textContent =
     `${numberFormat.format(paired.length)} / ${numberFormat.format(filteredInstitutions.length)} institutions`;
-  getElement("kpi-flows").textContent = numberFormat.format(employment.withFlows);
-  getElement("flow-kpi-note").textContent =
-    `${numberFormat.format(employment.withFlows)} of ${numberFormat.format(employment.denominator)} in view · ${cohortLabel(state.pseoSnapshot)}`;
   getElement("state-filter").value = state.region;
   getElement("size-filter").value = state.size;
   getElement("map-metric").value = state.mapMetric;
@@ -706,17 +706,34 @@ getElement("open-school").addEventListener("click", searchSchool);
 getElement("school-search").addEventListener("keydown", (e) => {
   if (e.key === "Enter") searchSchool();
 });
-for (const id of ["method-button", "source-link"]) {
-  const button=getElement(id);button.setAttribute('aria-controls','tooltip');button.setAttribute('aria-expanded','false');
-  button.addEventListener('click',(event)=>{
-    if(button.getAttribute('aria-expanded')==='true'){hideTooltip();return;}
-    showTooltip(event,`<strong>Sources and comparison periods</strong>IPEDS: ${META.awardYear} bachelor’s degree awards, not enrollment.<br>PSEO: ${META.pseoRelease}; ${cohortLabel(state.pseoSnapshot)}. Program income is in ${META.pseoDollarYear} dollars.<br>Industry pay: national private-sector QCEW through ${META.quarterLatest}. Pay growth and CPI inflation compare the same quarter one year earlier. CPI is a national reference; both curves end at ${PAY_COMPARISON_END}.<br>Hiring demand: Indeed Hiring Lab, through ${window.HIRING_DATA?.latest || "the latest snapshot"}; national occupational indices and separate state all-job references. Related roles are reviewed mappings, not alumni destinations. Hiring is independent of the alumni cohort.<div class="tip-muted">Area sums awards in the active scope. Industry line width uses historical PSEO employment shares, not current enrollment. National industry pay is not selected alumni pay. Destination clicks highlight the map only. Escape closes this note.</div>`, "notes");
-    getElement('tooltip').style.pointerEvents='auto';
-    button.setAttribute('aria-expanded','true');
-    if(event.detail===0){getElement('tooltip').setAttribute('tabindex','-1');getElement('tooltip').setAttribute('role','note');getElement('tooltip').focus();}
-  });
-}
-document.addEventListener('pointerdown',(event)=>{if(!event.target.closest('#tooltip,#method-button,#source-link'))hideTooltip();});
+// A short source list replaces the former methods/provenance note.
+const dataSources = [
+  ["College Scorecard", "https://collegescorecard.ed.gov/data/"],
+  ["IPEDS", "https://nces.ed.gov/ipeds/"],
+  ["Census PSEO", "https://lehd.ces.census.gov/data/pseo_documentation.html"],
+  ["BLS · Industry pay", "https://www.bls.gov/cew/"],
+  ["BLS · Consumer prices", "https://www.bls.gov/cpi/"],
+  ["Indeed Hiring Lab", "https://github.com/hiring-lab/job_postings_tracker"],
+];
+const sourceButton = getElement("method-button");
+sourceButton.setAttribute("aria-controls", "tooltip");
+sourceButton.setAttribute("aria-expanded", "false");
+sourceButton.setAttribute("aria-haspopup", "dialog");
+sourceButton.addEventListener("click", (event) => {
+  if (sourceButton.getAttribute("aria-expanded") === "true") { hideTooltip(); return; }
+  const links = dataSources.map(([name, url]) =>
+    `<a href="${url}" target="_blank" rel="noopener noreferrer">${name}<span aria-hidden="true">↗</span></a>`).join("");
+  showTooltip(event, `<strong>Data sources</strong><nav class="source-links" aria-label="Data sources">${links}</nav>`, "notes");
+  const popup = getElement("tooltip");
+  popup.style.pointerEvents = "auto";
+  popup.setAttribute("role", "dialog");
+  popup.setAttribute("aria-label", "Data sources");
+  sourceButton.setAttribute("aria-expanded", "true");
+  if (event.detail === 0) { popup.setAttribute("tabindex", "-1"); popup.focus(); }
+});
+document.addEventListener("pointerdown", (event) => {
+  if (!event.target.closest("#tooltip,#method-button")) hideTooltip();
+});
 getElement("fullscreen").addEventListener("click", async () => {
   try {
     if (document.fullscreenElement) await document.exitFullscreen();

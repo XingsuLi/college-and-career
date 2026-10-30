@@ -85,10 +85,6 @@ function renderIndustryPay() {
     .attr('title',(row)=>`${row.label} · Share: ${row.count}/${total} · ${(100*row.share).toFixed(1)}%${row.available?'':' · Pay: N/A'}`)
     .html((row)=>`<span>${escapeHtml(row.short)}${row.available?'':' · N/A'}</span><b><i style="border-top:${WIDTH_PER_SHARE*row.share}px solid ${row.available?industryColor(row.code):'#b6bcb8'}"></i>${(100*row.share).toFixed(1)}%</b>`)
     .on('click',(_,row)=>{industryPayState.focus=industryPayState.focus===row.code?null:row.code;hideTooltip();requestRender();});
-  getElement('industry-pay-source').textContent=`BLS · through ${PAY_COMPARISON_END.replace('-',' ')}`;
-  getElement('industry-pay-source').title='QCEW wage growth (latest quarter preliminary) and CPI-U inflation';
-  getElement('industry-pay-coverage').textContent=total?`Curves: ${(100*covered).toFixed(1)}% of flows · width = share`:'No published destinations';
-  getElement('industry-pay-coverage').title=`Share: ${(100*covered).toFixed(1)}% · ${numberFormat.format(total)} total`;
   const reason=!scope?.ids.length?'No schools in this scope':!total?'No published employment destinations':!available.length?'No wage series for these employment sectors':null;
   getElement('industry-pay-empty').hidden=!reason;
   getElement('industry-pay-empty-title').textContent=reason||'';
@@ -103,7 +99,7 @@ function renderIndustryPay() {
     values:Object.fromEntries(available.map((row)=>[row.code,payPoints(row.code).map((p)=>[p.label,p.value])])),reason};
 }
 function drawIndustryPay({svg,w,h},industries,composition) {
-  const m={l:49,r:24,t:20,b:43};
+  const m={l:49,r:24,t:20,b:32};
   const series=industries.map((row)=>({...row,points:payPoints(row.code)}));
   const cpi={code:'cpi',label:'CPI inflation',reference:true,share:null,points:cpiPoints()};
   series.push(cpi);
@@ -167,14 +163,12 @@ function drawIndustryPay({svg,w,h},industries,composition) {
   for(const year of d3.range(Math.floor(dataExtent[0]),Math.floor(dataEnd)+1)){
     const first=Math.max(year,dataExtent[0]),last=Math.min(year+.75,dataEnd);
     svg.append('text').attr('class','axis-label quarter-year-label')
-      .attr('x',x((first+last)/2)).attr('y',h-16).attr('text-anchor','middle').text(year);
+      .attr('x',x((first+last)/2)).attr('y',h-5).attr('text-anchor','middle').text(year);
   }
   svg.append('g').attr('class','axis').attr('transform',`translate(${m.l},0)`)
     .call(d3.axisLeft(y).ticks(h<160?3:4).tickFormat((v)=>v+'%'));
   svg.append('text').attr('class','axis-label').attr('x',m.l).attr('y',11)
     .text('Pay growth · YoY');
-  svg.append('text').attr('class','axis-label').attr('x',w-m.r).attr('y',h-3).attr('text-anchor','end')
-    .text('Calendar quarter · dashed tail = preliminary');
   // Reference legend is separate from the five employment-share legend entries.
   const key=svg.append('g').attr('class','cpi-reference-key');
   const label=key.append('text').attr('class','axis-label').attr('x',w-m.r).attr('y',11)

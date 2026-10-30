@@ -151,12 +151,6 @@ function renderHiringDemand() {
     : selection.family
       ? `No reviewed role mapping · ${latestLabel}${selection.region ? ` · ${selection.region} all jobs` : " · U.S. all jobs"}`
       : `All-job references · ${latestLabel}${selection.region ? ` · ${selection.region} and U.S.` : " · United States"}`;
-  getElement("industry-pay-source").textContent = "Indeed Hiring Lab · seasonally adjusted";
-  getElement("industry-pay-source").title =
-    "Total postings · 7-day average · CC BY 4.0";
-  getElement("industry-pay-coverage").textContent = "Index · Feb 2020 = 100 · equal-width lines";
-  getElement("industry-pay-coverage").title =
-    "Feb 2020 = 100";
   getElement("industry-pay-empty").hidden = true;
   getElement("industry-pay-svg").setAttribute(
     "aria-label",
@@ -221,7 +215,7 @@ function renderHiringDemand() {
 }
 
 function drawHiringDemand({ svg, w, h }, series) {
-  const m = { l: 42, r: 22, t: 21, b: 30 };
+  const m = { l: 42, r: 22, t: 21, b: 22 };
   const x = d3
     .scaleUtc()
     .domain([d3.utcParse("%Y-%m-%d")("2023-01-01"), hiringDates.at(-1)])
@@ -321,14 +315,6 @@ function drawHiringDemand({ svg, w, h }, series) {
     .attr("x", m.l)
     .attr("y", 11)
     .text("Job postings index · Feb 1, 2020 = 100");
-  svg
-    .append("text")
-    .attr("class", "axis-label")
-    .attr("x", w - m.r)
-    .attr("y", h - 3)
-    .attr("text-anchor", "end")
-    .text(`Related roles, not alumni outcomes · to ${hiringDateLabel(hiringDates.at(-1))}`);
-
   // A single inspection surface shows ALL observed series at the nearest week.
   // This avoids pointer ambiguity where thin lines cross each other.
   const cursor = svg.append("g").attr("class", "hiring-cursor").attr("pointer-events", "none");
