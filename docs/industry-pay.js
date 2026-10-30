@@ -172,7 +172,7 @@ function drawIndustryPay({svg,w,h},industries,composition) {
   // Reference legend is separate from the five employment-share legend entries.
   const key=svg.append('g').attr('class','cpi-reference-key');
   const label=key.append('text').attr('class','axis-label').attr('x',w-m.r).attr('y',11)
-    .attr('text-anchor','end').text('CPI inflation · '+PAY_COMPARISON_END.replace('-',' '));
+    .attr('text-anchor','end').text('CPI inflation');
   const keyX=w-m.r-label.node().getComputedTextLength();
   key.append('line').attr('x1',keyX-26).attr('x2',keyX-6).attr('y1',7).attr('y2',7)
     .attr('stroke',COLORS.reference).attr('stroke-width',1.8).attr('stroke-dasharray','6 3');
