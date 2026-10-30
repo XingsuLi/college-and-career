@@ -372,7 +372,7 @@ function renderScatter(paired) {
   const regression=fitCollegeRegression(paired);
   window.scatterRegressionAudit={...regression,scope:{state:state.region,type:state.type,size:state.size},weighting:'Equal weight per institution',fitScope:'Global institution filters; highlights do not refit'};
   const { svg, w, h } = createChart("scatter-svg"),
-    m = { l: 62, r: 25, t: 25, b: 39 },
+    m = { l: 62, r: 84, t: 25, b: 39 },
     pw = w - m.l - m.r,
     ph = h - m.t - m.b;
   const x = d3
@@ -440,10 +440,17 @@ function renderScatter(paired) {
       .attr("y2", y(ym));
     svg
       .append("text")
-      .attr("class", "median-label")
+      .attr("class", "median-label median-label-y")
       .attr("x", w - m.r - 3)
       .attr("y", y(ym) + 13)
       .attr("text-anchor", "end")
+      .text("Sample median");
+    const labelOnLeft = x(xm) + 80 > w - m.r;
+    svg.append("text")
+      .attr("class", "median-label median-label-x")
+      .attr("x", x(xm) + (labelOnLeft ? -6 : 6))
+      .attr("y", m.t + 12)
+      .attr("text-anchor", labelOnLeft ? "end" : "start")
       .text("Sample median");
   }
   // Draw the benchmark behind the points and clip it to the plotting rectangle.
@@ -455,6 +462,16 @@ function renderScatter(paired) {
       .attr('y1',y(regression.intercept+regression.slope*regression.xExtent[0]))
       .attr('y2',y(regression.intercept+regression.slope*regression.xExtent[1]))
       .attr('pointer-events','none');
+    // Label the visible right end; the reserved margin keeps it off the points.
+    const fittedRight = regression.intercept + regression.slope * regression.xExtent[1];
+    const labelValue = Math.max(y.domain()[0], Math.min(y.domain()[1], fittedRight));
+    svg.append('text').attr('id','scatter-trend-label').attr('class','scatter-regression-label')
+      .attr('x',w-m.r+8)
+      .attr('y',Math.max(m.t+10,Math.min(h-m.b-5,y(labelValue)+3)))
+      .attr('tabindex',0).attr('role','img').attr('aria-label','Trend line')
+      .text('Trend line')
+      .on('mousemove',(event)=>showTooltip(event,regressionTooltip(regression)))
+      .on('mouseleave',hideTooltip);
   }
   svg
     .append("g")
