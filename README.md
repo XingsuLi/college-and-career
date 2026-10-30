@@ -1,6 +1,6 @@
 # College & Career
 
-**[Open the interactive dashboard](https://lixingsu.github.io/college-and-career/)**
+**[Open the interactive dashboard](https://xingsuli.github.io/college-and-career/)**
 
 Explore U.S. colleges, majors, graduate outcomes and hiring trends in four linked D3 views.
 Designed for desktop: a fixed 2 × 2 layout with no scrolling.
