@@ -10,7 +10,7 @@
       name="description"
       content="Compare U.S. colleges and majors. Explore costs, earnings and hiring trends in four linked views."
     />
-    <link rel="stylesheet" href="styles.css?v=80b34f3da1" />
+    <link rel="stylesheet" href="styles.css?v=3b7fac1e31" />
     <script defer src="vendor/d3.min.js"></script>
     <script defer src="colors.js"></script>
     <script defer src="states.js"></script>
@@ -28,8 +28,8 @@
     <script defer src="cpi-data.js"></script>
     <script defer src="quarterly-pay-data.js"></script>
     <script defer src="hiring-data.js"></script>
-    <script defer src="industry-pay.js?v=d748c1f4e0"></script>
-    <script defer src="hiring.js?v=a21ae0831b"></script>
+    <script defer src="industry-pay.js?v=dec535ed4e"></script>
+    <script defer src="hiring.js?v=8ea27e8da0"></script>
     <script defer src="school-programs.js"></script>
   </head>
   <body>
@@ -188,9 +188,10 @@
         </section>
         <section class="panel industry-pay-panel" aria-labelledby="industry-pay-title">
           <div class="panel-head"><div><span class="panel-no">04</span><h2 id="industry-pay-title">Industry pay benchmarks</h2></div>
-            <select id="industry-pay-mode" aria-label="Industry pay or recent hiring demand">
-<option value="pay-growth">Pay growth · YoY</option>
-<option value="hiring">Hiring demand</option></select></div>
+            <div id="industry-pay-mode" class="market-tabs" role="group" aria-label="Market view">
+              <button type="button" data-market-mode="pay-growth" aria-controls="industry-pay-svg" aria-pressed="true">Pay growth</button>
+              <button type="button" data-market-mode="hiring" aria-controls="industry-pay-svg" aria-pressed="false">Hiring demand</button>
+            </div></div>
           <div class="industry-pay-controls"><span id="industry-pay-scope"></span><label class="cohort-control"><span>Graduates</span><select id="pseo-snapshot" aria-label="Graduates and years after graduation"></select></label></div>
           <div id="industry-coverage-line" aria-live="polite"></div>
           <div id="industry-pay-legend" aria-label="Major employment industries and their shares"></div>

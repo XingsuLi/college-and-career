@@ -63,3 +63,8 @@ and push. GitHub Pages serves that folder directly.
 The source list reuses the compact popup container with interactive anchors;
 Escape and outside click close it. Chart hovers reset the source-open state.
 The shell has five grid rows and the market panel has no footer row.
+
+
+The market header uses two persistent `data-market-mode` buttons instead of a
+select. They update `industryPayState.mode`; rendering sets `aria-pressed`,
+active styling and pay-data availability. Native button keyboard behavior is retained.

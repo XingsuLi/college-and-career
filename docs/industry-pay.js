@@ -54,11 +54,15 @@ function cpiPoints() {
 function renderIndustryPay() {
   const composition=selectedIndustryComposition();
   const hasWages=composition.top.some((row)=>row.available);
-  getElement('industry-pay-mode').querySelectorAll('option').forEach((option)=>{
-    option.disabled=option.value!=='hiring'&&!hasWages;
-  });
-  // Keep a useful view when the selected school/field has no PSEO destinations.
+  // Keep both view choices visible; unavailable pay data disables its button.
   if(composition.scope?.ids.length&&!hasWages)industryPayState.mode='hiring';
+  getElement('industry-pay-mode').querySelectorAll('[data-market-mode]').forEach((button)=>{
+    const active=button.dataset.marketMode===industryPayState.mode;
+    button.disabled=button.dataset.marketMode==='pay-growth'&&!hasWages;
+    button.classList.toggle('active',active);
+    button.setAttribute('aria-pressed',String(active));
+    button.title=button.disabled?'No published industry destinations':'';
+  });
   if (industryPayState.mode === 'hiring') { renderHiringDemand(); return; }
   window.hiringAudit = null;
   window.hiringHoverAudit = null;
@@ -69,7 +73,6 @@ function renderIndustryPay() {
   getElement('pseo-snapshot').setAttribute('aria-label', 'Sets graduate cohort for program income and employment weights');
   const {school,scope,contributors,families,total,ranked,top}=composition;
   if(!top.some((row)=>row.code===industryPayState.focus))industryPayState.focus=null;
-  getElement('industry-pay-mode').value=industryPayState.mode;
   getElement('pseo-snapshot').value=state.pseoSnapshot;
   const familyLabel=families.length===1?(fieldNames[families[0]]||families[0]):families.length?`${families.length} fields`:'All bachelor’s fields';
   const scopeLabel=scope?.kind==='national'?'U.S.':scope?.kind==='selection'?'Selected schools':scope?.name;
@@ -254,5 +257,10 @@ function attachIndustryPointer(svg,groups,series,x,y,m,w,h,composition,opacity) 
       }
     });
 }
-getElement('industry-pay-mode').addEventListener('change',(event)=>{industryPayState.mode=event.target.value;hideTooltip();requestRender();});
+getElement('industry-pay-mode').addEventListener('click',(event)=>{
+  const button=event.target.closest('[data-market-mode]');
+  if(!button||button.disabled)return;
+  industryPayState.mode=button.dataset.marketMode;
+  hideTooltip();requestRender();
+});
 getElement('reset').addEventListener('click',()=>{industryPayState.mode='pay-growth';industryPayState.focus=null;});

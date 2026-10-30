@@ -126,7 +126,6 @@ function renderHiringDemand() {
   if (!series.some((row) => row.code === hiringState.focus)) hiringState.focus = null;
   const latestLabel = hiringDateLabel(hiringDates.at(-1));
   getElement("industry-pay-title").textContent = "Hiring demand · Indeed";
-  getElement("industry-pay-mode").value = "hiring";
   getElement("pseo-snapshot").value = state.pseoSnapshot;
   document.querySelector(".cohort-control > span").textContent = "Graduates";
   getElement("pseo-snapshot").title =

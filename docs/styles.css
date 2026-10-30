@@ -66,7 +66,7 @@ a:focus-visible {
 }.app-shell {
   height: 100dvh;
   display: grid;
-  
+
   padding: 0 28px;
   gap: 0;
 }.topbar {
@@ -605,7 +605,7 @@ a:focus-visible {
 }
 @media (min-width: 1700px) {.app-shell {
     padding: 0 40px;
-    
+
   }.dashboard {
     gap: 19px;
   }.panel {
@@ -624,7 +624,7 @@ a:focus-visible {
 }
 @media (max-width: 1300px) {.app-shell {
     padding: 0 19px;
-    
+
   }.kpi {
     min-width: 138px;
     padding: 0 22px;
@@ -653,7 +653,7 @@ a:focus-visible {
   }
 }
 @media (max-height: 760px) {.app-shell {
-    
+
   }.intro p {
     display: none;
   }.kpi strong {
@@ -811,8 +811,8 @@ a:focus-visible {
 @media (max-height:820px) {.overview h1 { font-size:24px; }.program-summary { font-size:8px; }
 }/* School program -> major employment industries,
 directly in panel four. */
-.industry-pay-panel { grid-template-rows:36px 26px 38px minmax(0,1fr); }.industry-pay-panel .panel-head { padding:0 14px; }.industry-pay-panel .panel-head h2 { font-size:12px; }#industry-pay-mode { max-width:156px; padding:5px; border-radius:4px; background:#f0f4ef; font-size:10px; }.industry-pay-controls { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 14px; min-width:0; }#industry-pay-scope { min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:10px; font-weight:550; }.industry-pay-controls select { flex-shrink:0; max-width:158px; font-size:10px; padding:4px; border-radius:4px; background:#f0f4ef; }#industry-pay-legend { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px; align-items:center; padding:0 12px; min-width:0; }.industry-legend-item { min-width:0; padding:3px 4px; text-align:left; border-radius:4px; }.industry-legend-item > span { display:block; font-size:9px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }.industry-legend-item b { display:flex; align-items:center; gap:5px; margin-top:4px; font-size:9px; font-weight:550; font-variant-numeric:tabular-nums; }.industry-legend-item i { display:inline-block; width:19px; height:0; }.industry-legend-item[aria-pressed="true"] { background:#fbefdc; box-shadow:inset 0 0 0 1px #b5701a; }.industry-pay-panel .panel-foot { padding:0 14px; gap:5px; font-size:8px; }.industry-pay-hit { cursor:pointer; }.industry-pay-hit:focus-visible { outline:none; stroke:#18332e; stroke-width:2px; stroke-opacity:1; stroke-dasharray:3 3; filter:drop-shadow(0 0 2px #ffffff); }
-@media(max-width:1250px) {.industry-pay-panel .panel-head h2 { font-size:11px; }#industry-pay-mode { max-width:142px; }.industry-pay-panel .panel-foot { font-size:7px; }.industry-legend-item > span,
+.industry-pay-panel { grid-template-rows:36px 26px 38px minmax(0,1fr); }.industry-pay-panel .panel-head { padding:0 14px; }.industry-pay-panel .panel-head h2 { font-size:12px; }.industry-pay-controls { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 14px; min-width:0; }#industry-pay-scope { min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:10px; font-weight:550; }.industry-pay-controls select { flex-shrink:0; max-width:158px; font-size:10px; padding:4px; border-radius:4px; background:#f0f4ef; }#industry-pay-legend { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px; align-items:center; padding:0 12px; min-width:0; }.industry-legend-item { min-width:0; padding:3px 4px; text-align:left; border-radius:4px; }.industry-legend-item > span { display:block; font-size:9px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }.industry-legend-item b { display:flex; align-items:center; gap:5px; margin-top:4px; font-size:9px; font-weight:550; font-variant-numeric:tabular-nums; }.industry-legend-item i { display:inline-block; width:19px; height:0; }.industry-legend-item[aria-pressed="true"] { background:#fbefdc; box-shadow:inset 0 0 0 1px #b5701a; }.industry-pay-panel .panel-foot { padding:0 14px; gap:5px; font-size:8px; }.industry-pay-hit { cursor:pointer; }.industry-pay-hit:focus-visible { outline:none; stroke:#18332e; stroke-width:2px; stroke-opacity:1; stroke-dasharray:3 3; filter:drop-shadow(0 0 2px #ffffff); }
+@media(max-width:1250px) {.industry-pay-panel .panel-head h2 { font-size:11px; }.industry-pay-panel .panel-foot { font-size:7px; }.industry-legend-item > span,
 .industry-legend-item b { font-size:8px; }
 }.programs-panel .panel-head h2 { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }.programs-panel .panel-head > div { flex:1; min-width:0; }#program-view { flex-shrink:0; }
 
@@ -822,11 +822,11 @@ directly in panel four. */
 .panel-head h2,.programs-panel .panel-head h2,.industry-pay-panel .panel-head h2 { font-size:12px; }
 .panel-foot,.programs-panel .panel-foot,.industry-pay-panel .panel-foot { font-size:10px; }
 .axis text,.axis-label,.coverage-caption,.program-row-label { font-size:10px; }
-.program-controls select,.industry-pay-controls select,#program-view,#industry-pay-mode { font-size:11px; }
+.program-controls select,.industry-pay-controls select,#program-view { font-size:11px; }
 .program-summary,#program-color-key,#program-page { font-size:10px; }
 .industry-pay-panel { grid-template-rows:34px 27px 19px 38px minmax(0,1fr); }
 .industry-legend-item > span,.industry-legend-item b { font-size:10px; }
-#industry-pay-mode { max-width:190px; }
+
 #industry-pay-scope { font-size:10px; }
 #industry-coverage-line { padding:0 14px; font-size:10px; color:#496558; }
 .cohort-control { display:flex; align-items:center; gap:4px; flex-shrink:0; font-size:10px; }
@@ -862,7 +862,7 @@ directly in panel four. */
   .brand { font-size:19px; }
   .top-actions { gap:10px; }
   .source-badge { display:none; }
-  #industry-pay-mode { max-width:170px; }
+
   .industry-pay-panel .panel-head h2 { font-size:11px; }
   .cohort-control span { display:none; }
   .cohort-control select { max-width:215px; }
@@ -929,3 +929,9 @@ directly in panel four. */
 
 .median-label,.scatter-regression-label { paint-order:stroke; stroke:#ffffff; stroke-width:3px; stroke-linejoin:round; }
 .median-label { pointer-events:none; }
+
+/* Both market views remain visible as peer controls. */
+#industry-pay-mode { display:inline-flex; align-items:stretch; flex-shrink:0; gap:3px; padding:3px; border:1px solid #dfe5dc; border-radius:6px; background:#edf0e9; }
+#industry-pay-mode button { padding:4px 9px; font:inherit; font-size:11px; line-height:16px; font-weight:550; white-space:nowrap; color:#5c6b63; border-radius:4px; }
+#industry-pay-mode button.active { background:#ffffff; color:#18332e; box-shadow:0 1px 4px #1a382814; }
+#industry-pay-mode button:disabled { cursor:default; }
