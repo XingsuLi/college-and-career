@@ -10,7 +10,7 @@
       name="description"
       content="Compare U.S. colleges and majors. Explore costs, earnings and hiring trends in four linked views."
     />
-    <link rel="stylesheet" href="styles.css?v=26f268544e" />
+    <link rel="stylesheet" href="styles.css?v=d3e54ef6f2" />
     <script defer src="vendor/d3.min.js"></script>
     <script defer src="colors.js"></script>
     <script defer src="states.js"></script>
@@ -19,9 +19,9 @@
     <script defer src="employment.js"></script>
     <script defer src="school-program-data.js"></script>
     <script defer src="graduate-earnings-data.js"></script>
-    <script defer src="source-manifest.js"></script>
+    <script defer src="source-manifest.js?v=0c88228fed"></script>
     <script defer src="ui-state.js"></script>
-    <script defer src="app.js?v=76a49b40ca"></script>
+    <script defer src="app.js?v=272de6bc39"></script>
     <script defer src="program-income.js"></script>
     <script defer src="industry-destinations-data.js"></script>
     <script defer src="industry-pay-data.js"></script>
@@ -116,7 +116,7 @@
               <span class="panel-subtitle">By state</span>
             </div>
             <select id="map-metric" aria-label="Map metric">
-              <option value="net_price">Net price</option>
+              <option value="net_price">Annual cost after aid</option>
               <option value="earnings_10yr">10-year earnings</option>
               <option value="completion_rate">Completion rate</option>
               <option value="federal_debt">Federal debt</option>
@@ -153,7 +153,7 @@
             <svg
               id="scatter-svg"
               role="group"
-              aria-label="Net price versus earnings ten years after entry. Drag or click. Keyboard users: Find institution or use the school list in panel 3."
+              aria-label="Annual cost after aid versus earnings ten years after entry. Drag or click. Keyboard users: Find institution or use the school list in panel 3."
             ></svg>
             <div id="scatter-empty" class="empty-state" hidden>
               <b>No plottable institutions in this scope</b

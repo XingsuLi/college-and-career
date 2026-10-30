@@ -55,3 +55,8 @@ Source periods and hashes are in `docs/source-manifest.js` and [provenance/](pro
 The header's **Data sources** button opens six primary source links. The
 graduate-destination KPI, page footer and lower market-chart notes are removed.
 Quarter ticks and years remain visible in the fixed four-panel layout.
+
+
+The displayed cost label is **Annual cost after aid** (the underlying Scorecard
+net-price field). It averages total yearly attendance costs, including tuition
+and living expenses, minus grants and scholarships.

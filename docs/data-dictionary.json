@@ -1,7 +1,7 @@
 {
   "schema_version": "2.0",
   "release": "2026-10-15",
-  "title": "CollegeScope · College Costs, Outcomes, and Data Coverage",
+  "title": "CollegeScope \u00b7 College Costs, Outcomes, and Data Coverage",
   "default_scope": "CURROPER=1; PREDDEG=3; MAIN=1; 50 states + DC. No metric completeness filter.",
   "metric_definitions": {
     "net_price": {
@@ -26,7 +26,7 @@
           "merged_file": "2025_26"
         }
       },
-      "label_en": "Average net price for Title IV undergraduates"
+      "label_en": "Average annual cost after grants and scholarships"
     },
     "earnings_10yr": {
       "source_fields": [
@@ -179,12 +179,12 @@
     "invalid": "Unparseable value; data build fails"
   },
   "warnings": [
-    "Institution metrics describe undergraduate costs and outcomes, not computing master’s tuition, earnings, admissions, or ROI.",
+    "Institution metrics describe undergraduate costs and outcomes, not computing master\u2019s tuition, earnings, admissions, or ROI.",
     "Ten-year earnings are measured after entry, including non-completers, among eligible federally aided individuals working and not enrolled.",
     "Net price covers first-time full-time Title IV undergraduates; public institutions include only students paying in-state tuition.",
-    "Price, earnings, completion, debt and admissions use different cohorts and periods, not the same students’ inputs and outcomes.",
+    "Price, earnings, completion, debt and admissions use different cohorts and periods, not the same students\u2019 inputs and outcomes.",
     "Debt covers relevant undergraduate federal loans at the institution among borrowers who completed; excludes Parent PLUS, Perkins and private loans.",
-    "Earnings are in 2024 dollars and net price is for 2024–25; do not compute ROI, payback time or composite rankings.",
+    "Earnings are in 2024 dollars and net price is for 2024\u201325; do not compute ROI, payback time or composite rankings.",
     "NSLDS/Treasury results pool branches under OPEID6. MAIN=1 avoids duplicate weighting; map location is the main campus, not employment location.",
     "State/type aggregates are unweighted medians of available institution values, not statewide student medians. Show available and total counts.",
     "Program grain is OPEID6+CIPCODE+CREDLEV; IPEDSCOUNT is awards at the source UNITID. No fuzzy matching of unmatched records.",
@@ -193,14 +193,14 @@
   ],
   "four_views": [
     "institution/work-region map",
-    "cost–earnings scatterplot",
+    "cost\u2013earnings scatterplot",
     "Program award shares and published annual income in aligned rows",
     "employment-share-weighted national industry pay"
   ],
   "program_chart": {
     "school_key": "UNITID / exact OPEID8 crosswalk",
     "count": "IPEDS C2025_A provisional, AWLEVEL 5, MAJORNUM 1; degree awards, not enrollment",
-    "size_year": "2024–25",
+    "size_year": "2024\u201325",
     "income": "School-specific PSEO P25, P50, P75; constant 2023 USD",
     "grain": [
       "CIP2",
@@ -219,11 +219,11 @@
     "share_denominator": "All positive published employment counts, all industries and all work regions",
     "line_width_pixels": "18 * exact employment share",
     "rank": "Top five by employment count, not renormalized",
-    "wages": "National private-sector QCEW average annual pay, 2015–2025",
+    "wages": "National private-sector QCEW average annual pay, 2015\u20132025",
     "inflation": "Annual CPI-U for annual data; complete three-month CPI means for quarterly data. Q4 2025 real values unavailable.",
     "region_filter": "Does not change explicitly all-region destination weights",
     "individual_income_estimate": false,
-    "quarterly": "2020 Q1–2026 Q1 source weekly pay; displayed from 2021 Q1 with same-quarter real YoY"
+    "quarterly": "2020 Q1\u20132026 Q1 source weekly pay; displayed from 2021 Q1 with same-quarter real YoY"
   },
   "scope_aggregation": {
     "priority": [
@@ -235,7 +235,7 @@
     "default": "United States, 1725 eligible institutions",
     "program_size": "Sum first-major bachelor awards across exact scope IDs",
     "program_share": "Program awards / all awards in scope",
-    "aggregate_color": "Award share, fixed 0–30%+ scale",
+    "aggregate_color": "Award share, fixed 0\u201330%+ scale",
     "school_color": "Published school-specific PSEO median",
     "pooled_income_medians": false,
     "industry_weights": "Sum published destination counts across scope institutions, then divide by full published scope total"

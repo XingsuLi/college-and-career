@@ -10,7 +10,7 @@ window.SOURCE_META = {
   "annualEnd": 2025,
   "quarterLatest": "2026-Q1",
   "mapPeriods": {
-    "net_price": "Net price 2024\u201325",
+    "net_price": "Annual cost after aid 2024\u201325",
     "earnings_10yr": "Earnings 2022/23 \u00b7 2024 USD",
     "completion_rate": "Fall 2019 entrants \u00b7 150% time",
     "federal_debt": "Debt FY2024\u201325"

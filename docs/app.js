@@ -12,7 +12,7 @@ const types = {
   "Private for-profit": { label: "Private for-profit", color: COLORS.profit },
 };
 const metricInfo = {
-  net_price: { label: "Net price", short: "Net price", unit: "$" },
+  net_price: { label: "Annual cost after aid", short: "Annual cost after aid", unit: "$" },
   earnings_10yr: { label: "10-year earnings", short: "10-year earnings", unit: "$" },
   completion_rate: { label: "Completion rate", short: "Completion rate", unit: "%" },
   federal_debt: { label: "Federal debt", short: "Federal debt", unit: "$" },
@@ -138,7 +138,8 @@ function createChart(id) {
 }
 function institutionTooltip(r) {
   return `<strong>${escapeHtml(r.name)}</strong><div class="tip-muted">${escapeHtml(r.state)} · ${types[r.type].label}</div>`
-    + tooltipRow("Net price", formatMetric("net_price", r.metrics.net_price))
+    + tooltipRow("Annual cost after aid", formatMetric("net_price", r.metrics.net_price))
+    + `<div class="tip-muted">Tuition, living &amp; other costs − grants/scholarships.</div>`
     + tooltipRow("Year-10 earnings", formatMetric("earnings_10yr", r.metrics.earnings_10yr))
     + tooltipRow("Undergraduates", hasNumber(r.metrics.undergrad_size) ? numberFormat.format(r.metrics.undergrad_size) : "N/A");
 }
@@ -354,7 +355,7 @@ function fitCollegeRegression(rows) {
   const xMean=d3.mean(data,(r)=>r.metrics.net_price),yMean=d3.mean(data,(r)=>r.metrics.earnings_10yr);
   let xx=0,xy=0,yy=0;
   for(const r of data){const dx=r.metrics.net_price-xMean,dy=r.metrics.earnings_10yr-yMean;xx+=dx*dx;xy+=dx*dy;yy+=dy*dy;}
-  if(xx===0)return {available:false,n,reason:'Net prices do not vary in this scope.'};
+  if(xx===0)return {available:false,n,reason:'Annual costs do not vary in this scope.'};
   const slope=xy/xx,intercept=yMean-slope*xMean;
   const residualSum=d3.sum(data,(r)=>(r.metrics.earnings_10yr-(intercept+slope*r.metrics.net_price))**2);
   const r2=yy>0?Math.max(0,Math.min(1,1-residualSum/yy)):null;
@@ -363,7 +364,7 @@ function fitCollegeRegression(rows) {
 function regressionTooltip(fit) {
   if(!fit.available)return '<strong>Trend line unavailable</strong>';
   const change=(fit.slope<0?'−':'+')+currency(Math.abs(fit.slope*1000));
-  return '<strong>Trend line</strong>'+tooltipRow('Schools',numberFormat.format(fit.n))+tooltipRow('Per $1,000 net price',change);
+  return '<strong>Trend line</strong>'+tooltipRow('Schools',numberFormat.format(fit.n))+tooltipRow('Per $1,000 annual cost',change);
 }
 // 5. SCATTERPLOT: scales -> axes -> data-bound circles -> brush
 // x/y convert data values into pixels. invert() converts brush pixels back to values.
@@ -419,7 +420,7 @@ function renderScatter(paired) {
     .attr("x", w - m.r)
     .attr("y", h - 5)
     .attr("text-anchor", "end")
-    .text("Undergraduate net price →");
+    .text("Annual cost after aid →");
   if (paired.length) {
     const xm = d3.median(paired, (r) => r.metrics.net_price),
       ym = d3.median(paired, (r) => r.metrics.earnings_10yr);
@@ -598,7 +599,7 @@ function drawSchoolFocus(svg,school,x,y,size,m,w,h) {
   while(title.node().getComputedTextLength()>boxW-18&&label.length>4){label=label.slice(0,-1);title.text(label+'…');}
   title.append('title').text(school.name);
   focus.append('text').attr('x',bx+9).attr('y',by+30).attr('fill',COLORS.muted).attr('font-size',10)
-    .text(`Cost ${currency(school.metrics.net_price)} · Earnings ${currency(school.metrics.earnings_10yr)}`);
+    .text(`Cost after aid ${currency(school.metrics.net_price)} · Earnings ${currency(school.metrics.earnings_10yr)}`);
 }
 // Clicking a school selects it in place; all four charts stay on screen.
 function openSchool(id) {
