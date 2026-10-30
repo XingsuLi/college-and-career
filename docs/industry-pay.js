@@ -72,7 +72,7 @@ function renderIndustryPay() {
   getElement('pseo-snapshot').title = 'Graduates and years after graduation for program income and employment shares';
   getElement('pseo-snapshot').setAttribute('aria-label', 'Sets graduate cohort for program income and employment weights');
   const {school,scope,contributors,families,total,ranked,top}=composition;
-  if(!top.some((row)=>row.code===industryPayState.focus))industryPayState.focus=null;
+  if(industryPayState.focus!=='cpi'&&!top.some((row)=>row.code===industryPayState.focus))industryPayState.focus=null;
   getElement('pseo-snapshot').value=state.pseoSnapshot;
   const familyLabel=families.length===1?(fieldNames[families[0]]||families[0]):families.length?`${families.length} fields`:'All bachelor’s fields';
   const scopeLabel=scope?.kind==='national'?'U.S.':scope?.kind==='selection'?'Selected schools':scope?.name;
@@ -81,12 +81,25 @@ function renderIndustryPay() {
   getElement('industry-pay-scope').title=scope?`${scope.name} · ${familyLabel} · ${cohortLabel(state.pseoSnapshot)}`:'';
   getElement('industry-coverage-line').textContent=`PSEO: ${numberFormat.format(contributors)} of ${numberFormat.format(scope?.ids.length||0)} schools · ${numberFormat.format(total)} published employment counts`;
   const available=top.filter((row)=>row.available),covered=d3.sum(available,(row)=>row.share),topShare=d3.sum(top,(row)=>row.share);
-  const legend=d3.select('#industry-pay-legend').selectAll('button').data(top,(row)=>row.code).join('button')
-    .attr('class','industry-legend-item').attr('data-code',(row)=>row.code)
+  const latestCPI=cpiPoints().filter((point)=>hasNumber(point.value)).at(-1);
+  const legendRows=[...top,{code:'cpi',label:'CPI inflation',short:'CPI inflation',reference:true,available:!!latestCPI}];
+  d3.select('#industry-pay-legend')
+    .style('--legend-columns',legendRows.length)
+    .attr('aria-label','Industry employment shares and CPI inflation')
+    .selectAll('button').data(legendRows,(row)=>row.code).join('button')
+    .attr('class',(row)=>'industry-legend-item'+(row.reference?' industry-reference':''))
+    .attr('data-code',(row)=>row.code)
     .attr('disabled',(row)=>!row.available||null)
     .attr('aria-pressed',(row)=>String(industryPayState.focus===row.code))
-    .attr('title',(row)=>`${row.label} · Share: ${row.count}/${total} · ${(100*row.share).toFixed(1)}%${row.available?'':' · Pay: N/A'}`)
-    .html((row)=>`<span>${escapeHtml(row.short)}${row.available?'':' · N/A'}</span><b><i style="border-top:${WIDTH_PER_SHARE*row.share}px solid ${row.available?industryColor(row.code):'#b6bcb8'}"></i>${(100*row.share).toFixed(1)}%</b>`)
+    .attr('title',(row)=>row.reference
+      ? `CPI inflation · ${latestCPI?latestCPI.label+': '+signedPercent(latestCPI.value)+' YoY':'N/A'}`
+      : `${row.label} · Share: ${row.count}/${total} · ${(100*row.share).toFixed(1)}%${row.available?'':' · Pay: N/A'}`)
+    .html((row)=>{
+      const color=row.reference?COLORS.reference:row.available?industryColor(row.code):'#b6bcb8';
+      const width=row.reference?1.8:WIDTH_PER_SHARE*row.share;
+      const value=row.reference?(latestCPI?d3.format('.1f')(latestCPI.value)+'% YoY':'N/A'):(100*row.share).toFixed(1)+'%';
+      return `<span>${escapeHtml(row.short)}${row.available?'':' · N/A'}</span><b><i style="border-top:${width}px ${row.reference?'dashed':'solid'} ${color}"></i>${value}</b>`;
+    })
     .on('click',(_,row)=>{industryPayState.focus=industryPayState.focus===row.code?null:row.code;hideTooltip();requestRender();});
   const reason=!scope?.ids.length?'No schools in this scope':!total?'No published employment destinations':!available.length?'No wage series for these employment sectors':null;
   getElement('industry-pay-empty').hidden=!reason;
@@ -172,13 +185,6 @@ function drawIndustryPay({svg,w,h},industries,composition) {
     .call(d3.axisLeft(y).ticks(h<160?3:4).tickFormat((v)=>v+'%'));
   svg.append('text').attr('class','axis-label').attr('x',m.l).attr('y',11)
     .text('Pay growth · YoY');
-  // Reference legend is separate from the five employment-share legend entries.
-  const key=svg.append('g').attr('class','cpi-reference-key');
-  const label=key.append('text').attr('class','axis-label').attr('x',w-m.r).attr('y',11)
-    .attr('text-anchor','end').text('CPI inflation');
-  const keyX=w-m.r-label.node().getComputedTextLength();
-  key.append('line').attr('x1',keyX-26).attr('x2',keyX-6).attr('y1',7).attr('y2',7)
-    .attr('stroke',COLORS.reference).attr('stroke-width',1.8).attr('stroke-dasharray','6 3');
   attachIndustryPointer(svg,groups,series,x,y,m,w,h,composition,opacity);
   window.industryPayInteractionAudit={xDomain:x.domain(),lastWageX:wageEnd,lastCPIX:d3.max(cpi.points,(p)=>p.x),lastDataX:dataEnd,lastDataPixel:x(dataEnd),plotRight:w-m.r,yDomain:y.domain(),observedValueExtent:d3.extent(values),rightPaddingPixels:w-m.r-x(dataEnd),bridges:series.filter((row)=>row.tail).map((row)=>({code:row.code,from:row.tail.from.label,to:row.tail.to.label,missing:row.tail.missing}))};
 }

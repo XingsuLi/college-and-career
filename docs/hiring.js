@@ -157,6 +157,8 @@ function renderHiringDemand() {
   );
 
   d3.select("#industry-pay-legend")
+    .style("--legend-columns", 5)
+    .attr("aria-label", "Hiring demand indices")
     .selectAll("button")
     .data(series, (row) => row.code)
     .join("button")

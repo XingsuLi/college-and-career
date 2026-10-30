@@ -68,3 +68,9 @@ The shell has five grid rows and the market panel has no footer row.
 The market header uses two persistent `data-market-mode` buttons instead of a
 select. They update `industryPayState.mode`; rendering sets `aria-pressed`,
 active styling and pay-data availability. Native button keyboard behavior is retained.
+
+
+The pay legend appends CPI as a sixth peer entry. Industry numbers remain
+employment shares; CPI shows the latest observed inflation rate with a YoY
+suffix. Clicking CPI highlights the reference without changing the weights.
+The chart no longer repeats a separate CPI key inside the plot.
