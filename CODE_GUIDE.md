@@ -73,3 +73,7 @@ active styling and pay-data availability. Native button keyboard behavior is ret
 The pay legend appends CPI as a sixth peer entry. Industry numbers remain
 employment shares; CPI shows only its name and dashed reference key. Clicking CPI highlights the reference without changing the weights.
 The chart no longer repeats a separate CPI key inside the plot.
+
+
+Industry wage paths are solid through the latest observed quarter. CPI retains
+its dashed reference style. The renderer uses one path per series.

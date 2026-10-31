@@ -126,12 +126,6 @@ function drawIndustryPay({svg,w,h},industries,composition) {
   const dataEnd=dataExtent[1];
   const wageEnd=d3.max(series.filter((row)=>!row.reference).flatMap((row)=>row.points),(p)=>p.x);
   const x=d3.scaleLinear().domain([dataExtent[0],dataEnd]).range([m.l,w-m.r]);
-  for(const row of series){
-    const valid=row.points.filter((p)=>hasNumber(p.value));
-    const last=valid.at(-1),previous=valid.at(-2);
-    row.tail=!row.reference&&last?.x===wageEnd&&previous
-      ? {from:previous,to:last,missing:row.points.filter((p)=>p.x>previous.x&&p.x<last.x&&!hasNumber(p.value)).map((p)=>p.label)} : null;
-  }
   const lo=Math.min(0,d3.min(values)),hi=Math.max(0,d3.max(values));
   const padding=Math.max(.25,(hi-lo)*.08);
   const y=d3.scaleLinear().domain([lo-padding,hi+padding]).range([h-m.b,m.t]);
@@ -149,17 +143,11 @@ function drawIndustryPay({svg,w,h},industries,composition) {
   const groups=svg.selectAll('.destination-pay-series').data(series).join('g')
     .attr('class','destination-pay-series').attr('data-code',(row)=>row.code).attr('data-share',(row)=>row.share)
     .attr('opacity',opacity);
-  groups.append('path').attr('class','weighted-pay-line').attr('d',(row)=>line(row.tail?row.points.filter((p)=>p.x<row.tail.to.x):plottedPoints(row))).attr('fill','none')
+  groups.append('path').attr('class','weighted-pay-line').attr('d',(row)=>line(plottedPoints(row))).attr('fill','none')
     .attr('stroke',stroke)
     .attr('stroke-width',width)
     .attr('stroke-dasharray',(row)=>row.reference?'6 3':null)
     .attr('stroke-linejoin','round').attr('stroke-linecap','round');
-  groups.filter((row)=>row.tail).append('path').attr('class','pay-tail-bridge')
-    .attr('d',(row)=>line([row.tail.from,row.tail.to])).attr('fill','none')
-    .attr('stroke',stroke)
-    .attr('stroke-width',width)
-    .attr('stroke-dasharray','5 4').attr('stroke-linecap','round').attr('pointer-events','none')
-    .append('title').text((row)=>`${row.tail.from.label} to ${row.tail.to.label}: visual guide only.${row.tail.missing.length?' Missing: '+row.tail.missing.join(', ')+'. No value is imputed.':' Latest-quarter pay is preliminary.'}`);
   groups.each(function(row){
     d3.select(this).selectAll('circle').data(row.points.filter((p)=>hasNumber(p.value))).join('circle')
       .attr('data-period',(p)=>p.label).attr('cx',(p)=>x(p.x)).attr('cy',(p)=>y(p.value)).attr('r',row.reference?2.3:Math.min(2,WIDTH_PER_SHARE*row.share/2))
@@ -186,7 +174,7 @@ function drawIndustryPay({svg,w,h},industries,composition) {
   svg.append('text').attr('class','axis-label').attr('x',m.l).attr('y',11)
     .text('Pay growth · YoY');
   attachIndustryPointer(svg,groups,series,x,y,m,w,h,composition,opacity);
-  window.industryPayInteractionAudit={xDomain:x.domain(),lastWageX:wageEnd,lastCPIX:d3.max(cpi.points,(p)=>p.x),lastDataX:dataEnd,lastDataPixel:x(dataEnd),plotRight:w-m.r,yDomain:y.domain(),observedValueExtent:d3.extent(values),rightPaddingPixels:w-m.r-x(dataEnd),bridges:series.filter((row)=>row.tail).map((row)=>({code:row.code,from:row.tail.from.label,to:row.tail.to.label,missing:row.tail.missing}))};
+  window.industryPayInteractionAudit={xDomain:x.domain(),lastWageX:wageEnd,lastCPIX:d3.max(cpi.points,(p)=>p.x),lastDataX:dataEnd,lastDataPixel:x(dataEnd),plotRight:w-m.r,yDomain:y.domain(),observedValueExtent:d3.extent(values),rightPaddingPixels:w-m.r-x(dataEnd),bridges:[]};
 }
 // Distance to a straight segment, in screen pixels (not data units).
 function paySegmentDistance(px,py,ax,ay,bx,by) {
@@ -203,10 +191,9 @@ function attachIndustryPointer(svg,groups,series,x,y,m,w,h,composition,opacity) 
     const segments=row.reference?valid:row.points;
     for(let i=1;i<segments.length;i++){
       const from=segments[i-1],to=segments[i];
-      if(hasNumber(from.value)&&hasNumber(to.value)&&(!row.tail||to!==row.tail.to))
+      if(hasNumber(from.value)&&hasNumber(to.value))
         candidates.push({row,from,to,kind:'segment'});
     }
-    if(row.tail)candidates.push({row,from:row.tail.from,to:row.tail.to,kind:'tail'});
   }
   const cursor=svg.append('g').attr('class','industry-hover-markers').attr('pointer-events','none');
   let current=null,lastCode=null;
@@ -222,7 +209,7 @@ function attachIndustryPointer(svg,groups,series,x,y,m,w,h,composition,opacity) 
       if(distance<bestDistance-.2||preferred){best=candidate;bestDistance=distance;}
     }
     if(!best)return null;
-    // Near an observed dot, report the observation rather than its connecting guide.
+    // Near an observed dot, report the observation rather than its connecting segment.
     const points=best.row.points.filter((p)=>hasNumber(p.value));
     const point=points.reduce((a,b)=>Math.hypot(px-x(a.x),py-y(a.value))<=Math.hypot(px-x(b.x),py-y(b.value))?a:b);
     if(Math.hypot(px-x(point.x),py-y(point.value))<=9)best={row:best.row,point,kind:'point'};
@@ -239,16 +226,14 @@ function attachIndustryPointer(svg,groups,series,x,y,m,w,h,composition,opacity) 
     const {row,point,kind}=current;
     lastCode=row.code;
     const format=(p)=>signedPercent(p.value);
-    const guide=kind==='tail';
-    const detail=(guide?[row.tail.from,row.tail.to]:[point]).map((p)=>tooltipRow(p.label,format(p))).join('');
-    const gap=guide&&row.tail.missing.length?tooltipRow('Missing',escapeHtml(row.tail.missing.join(', '))):'';
+    const detail=tooltipRow(point.label,format(point));
     groups.attr('opacity',(other)=>other.reference||other.code===row.code?1:.15);
-    cursor.selectAll('circle').data(guide?[row.tail.from,row.tail.to]:[point]).join('circle')
+    cursor.selectAll('circle').data([point]).join('circle')
       .attr('cx',(p)=>x(p.x)).attr('cy',(p)=>y(p.value)).attr('r',4.5)
       .attr('fill','white').attr('stroke',row.reference?COLORS.reference:industryColor(row.code)).attr('stroke-width',2);
     const share=row.reference?'':tooltipRow('Share',`${numberFormat.format(row.count)}/${numberFormat.format(composition.total)} · ${(100*row.share).toFixed(1)}%`);
-    showTooltip(event,`<strong>${escapeHtml(row.label)}</strong>${detail}${share}${gap}`);
-    window.industryHoverAudit={code:row.code,kind,period:guide?null:point.label,shownPeriods:guide?[row.tail.from.label,row.tail.to.label]:[point.label],missingPeriods:guide?row.tail.missing:[],distancePixels:current.distance};
+    showTooltip(event,`<strong>${escapeHtml(row.label)}</strong>${detail}${share}`);
+    window.industryHoverAudit={code:row.code,kind,period:point.label,shownPeriods:[point.label],missingPeriods:[],distancePixels:current.distance};
   }
   svg.append('rect').attr('class','industry-pay-pointer-surface')
     .attr('x',m.l).attr('y',m.t).attr('width',w-m.l-m.r).attr('height',h-m.t-m.b)
