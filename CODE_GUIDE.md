@@ -71,6 +71,5 @@ active styling and pay-data availability. Native button keyboard behavior is ret
 
 
 The pay legend appends CPI as a sixth peer entry. Industry numbers remain
-employment shares; CPI shows the latest observed inflation rate with a YoY
-suffix. Clicking CPI highlights the reference without changing the weights.
+employment shares; CPI shows only its name and dashed reference key. Clicking CPI highlights the reference without changing the weights.
 The chart no longer repeats a separate CPI key inside the plot.

@@ -92,12 +92,12 @@ function renderIndustryPay() {
     .attr('disabled',(row)=>!row.available||null)
     .attr('aria-pressed',(row)=>String(industryPayState.focus===row.code))
     .attr('title',(row)=>row.reference
-      ? `CPI inflation · ${latestCPI?latestCPI.label+': '+signedPercent(latestCPI.value)+' YoY':'N/A'}`
+      ? 'CPI inflation'
       : `${row.label} · Share: ${row.count}/${total} · ${(100*row.share).toFixed(1)}%${row.available?'':' · Pay: N/A'}`)
     .html((row)=>{
       const color=row.reference?COLORS.reference:row.available?industryColor(row.code):'#b6bcb8';
       const width=row.reference?1.8:WIDTH_PER_SHARE*row.share;
-      const value=row.reference?(latestCPI?d3.format('.1f')(latestCPI.value)+'% YoY':'N/A'):(100*row.share).toFixed(1)+'%';
+      const value=row.reference?'':(100*row.share).toFixed(1)+'%';
       return `<span>${escapeHtml(row.short)}${row.available?'':' · N/A'}</span><b><i style="border-top:${width}px ${row.reference?'dashed':'solid'} ${color}"></i>${value}</b>`;
     })
     .on('click',(_,row)=>{industryPayState.focus=industryPayState.focus===row.code?null:row.code;hideTooltip();requestRender();});

@@ -938,3 +938,5 @@ directly in panel four. */
 
 .industry-legend-item i { width:14px; flex-shrink:0; }
 .industry-legend-item b { gap:3px; white-space:nowrap; }
+
+.industry-reference b { min-height:1.2em; }
