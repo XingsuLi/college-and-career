@@ -60,3 +60,9 @@ Quarter ticks and years remain visible in the fixed four-panel layout.
 The displayed cost label is **Annual cost after aid** (the underlying Scorecard
 net-price field). It averages total yearly attendance costs, including tuition
 and living expenses, minus grants and scholarships.
+
+
+Typography uses self-hosted [Geist Sans](https://vercel.com/font), distributed
+under SIL OFL 1.1; the font license is included beside the bundled font.
+Cards use 6px corners and thin borders; controls share a 4px corner system.
+The offline single-file export embeds the font and requires no font CDN.

@@ -192,3 +192,6 @@ getElement("program-next").addEventListener("click",()=>{programState.page++;req
 getElement("reset").addEventListener("click",()=>{Object.assign(programState,{view:'mix',grain:'2',fine:null,page:0});});
 // No geographic/institution selection: begin with the full dataset scope.
 render();
+
+// Re-measure SVG labels once the bundled font has loaded.
+if(document.fonts)document.fonts.ready.then(requestRender);

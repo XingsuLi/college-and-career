@@ -77,3 +77,9 @@ The chart no longer repeats a separate CPI key inside the plot.
 
 Industry wage paths are solid through the latest observed quarter. CPI retains
 its dashed reference style. The renderer uses one path per series.
+
+
+`styles.css` defines `--font-ui`, `--panel-radius`, `--control-radius` and
+`--control-line`. Geist is bundled as `vendor/geist-variable.woff2`; the offline
+packager embeds it as a data URL. SVG axes use the same type family. After
+`document.fonts.ready`, one redraw updates text measurements.
