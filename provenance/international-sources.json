@@ -1,0 +1,185 @@
+{
+  "GB": {
+    "sources": [
+      [
+        "DfE · LEO provider data",
+        "https://explore-education-statistics.service.gov.uk/find-statistics/graduate-labour-market-outcomes-leo/2023-24/explore"
+      ],
+      [
+        "DfE · subject and industry outcomes",
+        "https://explore-education-statistics.service.gov.uk/data-catalogue/data-set/a50ce128-d576-4f90-8cd2-b990d4d21a75"
+      ],
+      [
+        "Indeed Hiring Lab · job postings (CC BY 4.0)",
+        "https://github.com/hiring-lab/job_postings_tracker"
+      ]
+    ],
+    "source_files": {
+      "uk-leo.zip": "00de104378479b3ad0d7cadf50b81b2ec8c51e5a5e20ca9b23efe6d84a393e88",
+      "uk-industry.csv": "0b1504992c66d4961ecb90ce92db756e73464b3070a1448b17fd84985ba05e3a",
+      "aggregate_job_postings_GB.csv": "c5271d84346f97ad03b60a017f872974804617a96000fb57f59776de0231c8a0",
+      "regional_gb.csv": "e77381c54497b4b834e61297af2d0b06112e947403f1848c7e9fff8e69dc0e68"
+    },
+    "institutions": 402,
+    "fields": 35,
+    "rows_by_period": {
+      "1": 4060,
+      "3": 3958,
+      "5": 3762
+    },
+    "default_scope": {
+      "campuses": 333,
+      "program_cells": 3429,
+      "program_medians": 2649,
+      "institution_medians": 285
+    }
+  },
+  "FR": {
+    "sources": [
+      [
+        "MESRE · InserSup public data",
+        "https://data.enseignementsup-recherche.gouv.fr/explore/dataset/fr-esr-insersup/"
+      ],
+      [
+        "Indeed Hiring Lab · job postings (CC BY 4.0)",
+        "https://github.com/hiring-lab/job_postings_tracker"
+      ]
+    ],
+    "source_files": {
+      "fr.json": "976dd1d2d9f421282add2119ab8f2d43d1b42ec2c21fb410f333b25041f1a90e",
+      "aggregate_job_postings_FR.csv": "ec6a14c6fca87fe646063b87319fb59b418b959d1acc2eba4f835aaaee1b1613"
+    },
+    "institutions": 78,
+    "fields": 52,
+    "rows_by_period": {
+      "6": 506,
+      "12": 506,
+      "18": 506,
+      "24": 506,
+      "30": 506
+    },
+    "default_scope": {
+      "campuses": 78,
+      "program_cells": 428,
+      "program_medians": 152,
+      "institution_medians": 73
+    }
+  },
+  "AU": {
+    "sources": [
+      [
+        "QILT · Graduate Outcomes Survey",
+        "https://www.qilt.edu.au/surveys/graduate-outcomes-survey-%28gos%29"
+      ],
+      [
+        "ComparED · institution and study-area results",
+        "https://www.compared.edu.au/"
+      ],
+      [
+        "Indeed Hiring Lab · job postings (CC BY 4.0)",
+        "https://github.com/hiring-lab/job_postings_tracker"
+      ]
+    ],
+    "source_files": {
+      "au-inst.json": "b3594c88eafd922778aa9b17d56d84467849801ceeaa944dc464794ccb497357",
+      "au-areas.json": "aae624b9454c9610b2c4215d5137553271717aa68636df817e5264042f6be07b",
+      "au-area-agriculture-environmental-studies.json": "824ba5b71bf85cf610e4c49f70d176916b1111730151863a25b08bf79cfed3c1",
+      "au-area-architecture-building.json": "f9754eceebc4d80b0498ddde0ede03ac88ec7a88fcf9f272c4caeb889c9b4cd9",
+      "au-area-business-management.json": "834f30c43922ea8e7b08feef3926cb389b1b79f7c9281a1cc8e822384fdc5302",
+      "au-area-communications.json": "c18531a0cf6ce7c47b4307cf9c4b05b82206788e59364ee546528aa078a3e8ed",
+      "au-area-computing-information-systems.json": "23b9901c2acca3b3d8d0b69c2ac797ce16186c31aa3222fbfb1a145af749f8fd",
+      "au-area-creative-arts.json": "c5bd92c2e1412bc34351d5ae15a98b3bd25df37691040129254d2948722180a9",
+      "au-area-dentistry.json": "5035a91d924d8acdd1cc89813b6b73c45a92a98b2bd0308795faeb4262717d19",
+      "au-area-engineering.json": "02a7472ff5cd1eb4ff3881e27af6e33060e6db7c570937dd53a2fd2da88f98d6",
+      "au-area-health-services-support.json": "434176ceb4ae207384e82bd23ec9b12282daa9aef9ec8c91ebfead7f3eba3ccb",
+      "au-area-humanities-culture-social-sciences.json": "18e416056268eb9715ebdbbede2740ecdc6aa3c9a090bc89daa6d0d5d0f7d003",
+      "au-area-law-paralegal-studies.json": "a3c3283074651c530d85403c78f890acd7d673bc32f47211d51bc2d48e157f53",
+      "au-area-medicine.json": "d33fe51ed93e5b259b3dcb42712f518973e81ee4160337b5e96a4ecdae9c2957",
+      "au-area-nursing.json": "ce80c32793ba013cc6c948f85cd75b52bc72a3f30be0a5ba0f34688598b0cade",
+      "au-area-pharmacy.json": "25f8b56b9857f10d77952f328159c8152765adc9807841fcec2290630e87031b",
+      "au-area-psychology.json": "4312dd7d0a05f66e7624ef34d004c59da10683cac4b36753163f1c3b19a252aa",
+      "au-area-rehabilitation.json": "01031a14611b69faf647d38a8253a6c71a5e0ead0a00052170c0016dac76930b",
+      "au-area-science-mathematics.json": "02582895425729ba5cc86917ce8d591f4445d7a558f8a7a068eb0e96d849d096",
+      "au-area-social-work.json": "af62ab51f65dff0bc08afbf843f5db9752d2cd4057e183c241e1f04ebc80254a",
+      "au-area-teacher-education.json": "db356f12d82cb7aedd84bc078d45b78582260ad73cb88fe2813849606023a887",
+      "au-area-tourism-hospitality-personal-services-sport-recreation.json": "a522e543c982c73d1cf732b9a5649e36679f5910e899724448a0b0cbf26687bf",
+      "au-area-veterinary-science.json": "ec8f732d6f29e12cf7347bd529b74132b9e945df0df445b922be683b5612aaf2",
+      "aggregate_job_postings_AU.csv": "75a972c8974e3544b328814d15659ee534fb3331b4f4e92e91473783733b09d0",
+      "regional_au.csv": "4e81038d7832f0864a297c55ca1a413d1d63552beb6ce2c81ed8da00788de9a3"
+    },
+    "institutions": 159,
+    "fields": 21,
+    "rows_by_period": {
+      "pooled": 1080
+    },
+    "default_scope": {
+      "campuses": 159,
+      "program_cells": 987,
+      "program_medians": 727,
+      "institution_medians": 58
+    }
+  },
+  "SG": {
+    "sources": [
+      [
+        "MOE · Graduate Employment Survey",
+        "https://data.gov.sg/datasets/d_3c55210de27fcccda2ed0c63fdd2b352/view"
+      ]
+    ],
+    "source_files": {
+      "sg.json": "f3ef09612d255a1e21d7affce293b7ca11bb458c914e7740ff9841dc7284b6c0"
+    },
+    "institutions": 6,
+    "fields": 422,
+    "rows_by_period": {
+      "2013": 85,
+      "2014": 109,
+      "2015": 123,
+      "2016": 121,
+      "2017": 132,
+      "2018": 137,
+      "2020": 139,
+      "2019": 140,
+      "2021": 135,
+      "2022": 141,
+      "2023": 133,
+      "2024": 147
+    },
+    "default_scope": {
+      "campuses": 6,
+      "program_cells": 147,
+      "program_medians": 141,
+      "institution_medians": 0
+    }
+  },
+  "PL": {
+    "sources": [
+      [
+        "Polish Ministry of Science · ELA Graduate Tracking",
+        "https://ela.nauka.gov.pl/en/major"
+      ],
+      [
+        "ELA · data and methodology",
+        "https://ela.nauka.gov.pl/en/experts/source-data"
+      ]
+    ],
+    "source_files": {
+      "pl-2022.json": "46d114a1ba7b3cfb2531c320d33e9032f72465f8d1d4805a5ef601d8707eb0b2",
+      "pl-2023.json": "c417e92a04fee9036f4df00878a9b526e9df45d7ee2f15d30c783d3dfac41a18",
+      "pl-2024.json": "574099dae5093ee0143cb946feec0eaacd9ab8ceee34f7d4bc7fc65f3d55bc9c"
+    },
+    "institutions": 351,
+    "fields": 802,
+    "rows_by_period": {
+      "2022": 2496,
+      "2023": 2442,
+      "2024": 2406
+    },
+    "default_scope": {
+      "campuses": 260,
+      "program_cells": 2406,
+      "program_medians": 2406,
+      "institution_medians": 0
+    }
+  }
+}

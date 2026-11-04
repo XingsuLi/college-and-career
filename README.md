@@ -25,6 +25,33 @@ The Graduates menu keeps three representative groups: 2019–21 graduates one ye
 - Pay growth and CPI comparison: 2023 Q1–2026 Q1. The missing CPI quarter is connected without adding an observation.
 - Hiring demand: Indeed indices through October 23, 2026.
 
+## Countries
+
+Use the selector at the bottom right. The United States view uses the existing
+College Scorecard, IPEDS, PSEO, and labour-market data. The other views keep the
+four-panel layout and link the public regional, institution, and programme
+outcomes available in each country.
+
+| View | Scope | Panel 4 |
+| --- | --- | --- |
+| United Kingdom | DfE LEO, 2023–24 tax year, Great Britain providers; 1, 3, or 5 years after graduation | National subject-to-industry destinations or hiring |
+| France | InserSup, 2022 general bachelor’s cohort, 2026 S1 release | Employment 6–30 months after graduation or national hiring |
+| Australia | QILT ComparED, domestic undergraduate 2023–25 pooled survey | Employment by field or national and state hiring |
+| Singapore | MOE GES, six autonomous universities, latest published 2024 survey | Gross monthly earnings across survey years |
+| Poland | ELA, full-time first-cycle programmes, 2022–24 cohorts | First-year earnings across cohorts |
+
+Non-US scatterplots use each source’s published employment indicator and pay
+measure. Australia uses survey response counts as the treemap area. Singapore
+uses equal tiles because the public programme file does not report counts.
+Multi-institution comparisons show the median of published medians. They do not
+pool individual earnings or convert currencies. UK industry results are
+national benchmarks by field. Job postings show overall market demand.
+
+Source links, input hashes and coverage are recorded in
+[the country provenance file](provenance/international-sources.json).
+The data packer in [tools/build_countries.py](tools/build_countries.py) reads the
+named source extracts and writes the bundled country data.
+
 ## Run and edit
 
 The published files are in **`docs/`**. Open `docs/index.html` locally or serve it:

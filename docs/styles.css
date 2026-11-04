@@ -1105,3 +1105,50 @@ button,.select-wrap,.school-search input { border-radius:var(--control-radius); 
   .toolbar .kpi strong { font-size:19px; }
   .toolbar .kpi > span,.toolbar .kpi small { line-height:1; }
 }
+
+/* Country controls stay in the existing bottom status row. */
+.country-picker {
+  display:flex;
+  align-items:center;
+  gap:3px;
+  flex-shrink:0;
+}
+.country-picker button,.country-toggle {
+  padding:4px 7px;
+  border:1px solid transparent;
+  font-size:10px;
+  white-space:nowrap;
+}
+.country-picker button[aria-pressed="true"],.country-toggle {
+  background:#f1e8f9;
+  border-color:var(--control-line);
+  color:var(--accent);
+}
+.country-selection { flex:1; min-width:0; overflow:hidden; font-size:10px; }
+.country-selection span,.country-selection small {
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+#country-active-scope { font-weight:600; flex-shrink:0; max-width:62%; }
+#country-release { color:var(--muted); }
+.country-toolbar select { max-width:clamp(105px,19vw,295px); }
+.country-toolbar .select-wrap:nth-child(2),
+.country-toolbar .select-wrap:nth-child(3) { flex-shrink:1; min-width:0; }
+.country-toolbar .select-wrap select { min-width:0; }
+.country-dashboard .panel { grid-template-rows:38px minmax(0,1fr) 26px; }
+.country-dashboard .panel-foot { justify-content:center; min-width:0; }
+.country-dashboard .panel-foot span { overflow:hidden; text-overflow:ellipsis; }
+.country-bar[role=button],.country-dot,.country-tile { cursor:pointer; }
+.country-dot:hover,.country-dot:focus-visible { stroke:var(--ink); stroke-width:2; opacity:1; }
+.country-bar:focus-visible,.country-tile:focus-visible { outline:2px solid var(--accent); outline-offset:0; }
+@media (max-height:700px) {
+  .country-dashboard .panel { grid-template-rows:34px minmax(0,1fr) 23px; }
+}
+
+.country-dashboard .country-earnings-key {
+  font-size:10px;
+  color:var(--muted);
+  gap:4px;
+  white-space:nowrap;
+}

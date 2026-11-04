@@ -148,6 +148,7 @@ function institutionTooltip(r) {
 // filter -> selected IDs -> map / scatter / school programs / weighted industry pay.
 // Keep all filtered institutions as the denominator, including missing values.
 function render() {
+  if (getElement("us-dashboard").hidden) return;
   const start = performance.now();
   filteredInstitutions = filterInstitutions();
   const academicSelection = filteredInstitutions.filter(matchesAcademicSelection);
@@ -798,7 +799,9 @@ sourceButton.setAttribute("aria-expanded", "false");
 sourceButton.setAttribute("aria-haspopup", "dialog");
 sourceButton.addEventListener("click", (event) => {
   if (sourceButton.getAttribute("aria-expanded") === "true") { hideTooltip(); return; }
-  const links = dataSources.map(([name, url]) =>
+  const active = document.querySelector("#country-picker [aria-pressed=true]")?.dataset.country;
+  const sources = window.COUNTRY_VIEWS?.[active]?.sources || dataSources;
+  const links = sources.map(([name, url]) =>
     `<a href="${url}" target="_blank" rel="noopener noreferrer">${name}<span aria-hidden="true">↗</span></a>`).join("");
   showTooltip(event, `<strong>Data sources</strong><nav class="source-links" aria-label="Data sources">${links}</nav>`, "notes");
   const popup = getElement("tooltip");
