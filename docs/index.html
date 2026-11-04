@@ -10,7 +10,7 @@
       name="description"
       content="Compare U.S. colleges and majors. Explore costs, earnings and hiring trends in four linked views."
     />
-    <link rel="stylesheet" href="styles.css?v=1ab146159d" />
+    <link rel="stylesheet" href="styles.css?v=1afface65b" />
     <script defer src="vendor/d3.min.js"></script>
     <script defer src="colors.js?v=bc0c1b9249"></script>
     <script defer src="states.js"></script>
@@ -20,8 +20,8 @@
     <script defer src="school-program-data.js"></script>
     <script defer src="graduate-earnings-data.js"></script>
     <script defer src="source-manifest.js?v=244c70d436"></script>
-    <script defer src="ui-state.js?v=9426b27ea2"></script>
-    <script defer src="app.js?v=450ea46c87"></script>
+    <script defer src="ui-state.js"></script>
+    <script defer src="app.js?v=bddcd81aac"></script>
     <script defer src="program-income.js?v=c2c6bcb487"></script>
     <script defer src="industry-destinations-data.js"></script>
     <script defer src="industry-pay-data.js?v=8d34817bdb"></script>
@@ -31,9 +31,6 @@
     <script defer src="industry-pay.js?v=fdefdadc19"></script>
     <script defer src="hiring.js?v=3e3da78718"></script>
     <script defer src="school-programs.js?v=26b785ad07"></script>
-    <script defer src="country-data.js?v=ae5def61ff"></script>
-    <script defer src="country-parity-data.js?v=ac1c05454f"></script>
-    <script defer src="country-views.js?v=1132933287"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -65,7 +62,7 @@
           </button>
         </div>
       </header>
-      <section id="us-toolbar" class="toolbar" aria-label="Global filters">
+      <section class="toolbar" aria-label="Global filters">
         <div class="segmented" aria-label="Institution type">
           <button class="active" data-type="all" aria-pressed="true">All types</button
           ><button data-type="Public" aria-pressed="false"><i class="dot public"></i>Public</button
@@ -120,7 +117,7 @@
           ↺ Reset
         </button>
       </section>
-      <main id="us-dashboard" class="dashboard" aria-label="Four linked views">
+      <main class="dashboard" aria-label="Four linked views">
         <section class="panel map-panel" aria-labelledby="map-title">
           <div class="panel-head">
             <div>
@@ -211,86 +208,13 @@
             <div id="industry-pay-empty" class="empty-state" hidden><b id="industry-pay-empty-title"></b><span id="industry-pay-empty-note"></span></div></div>
         </section>
       </main>
-      <section id="country-toolbar" class="toolbar country-toolbar" aria-label="Country filters" hidden>
-        <label class="select-wrap"><span>Region</span><select id="country-region" aria-label="Country region"></select></label>
-        <div class="school-search">
-          <label class="sr-only" for="country-search">Find institution</label>
-          <input id="country-search" list="country-schools" placeholder="Find institution…" autocomplete="off">
-          <datalist id="country-schools"></datalist>
-          <button id="country-open-school" class="text-button" type="button">Select</button>
-        </div>
-        <div class="toolbar-spacer"></div>
-        <div class="kpis">
-          <div class="kpi"><span>Colleges in view</span><strong id="country-count"></strong><small id="country-scope-name"></small></div>
-          <div class="kpi"><span>With employment &amp; earnings</span><strong id="country-paired"></strong><small id="country-pair-note"></small></div>
-        </div>
-        <button id="country-reset" class="reset-button" type="button">↺ Reset</button>
-      </section>
-      <main id="country-dashboard" class="dashboard country-dashboard" aria-label="Four linked country views" hidden>
-        <section class="panel map-panel" aria-labelledby="country-region-title">
-          <div class="panel-head"><div><span class="panel-no">01</span><h2 id="country-region-title">Earnings across the map</h2></div></div>
-          <div class="chart map-chart">
-            <svg id="country-region-svg" role="group" aria-label="Map of regional earnings. Choose a region to filter."></svg>
-            <div class="map-legend">
-              <span id="country-map-min"></span><div id="country-map-gradient"></div><span id="country-map-max"></span>
-              <span class="no-data"><i></i>No data</span>
-            </div>
-            <div id="country-map-insight" class="map-insight"></div>
-          </div>
-          <div class="panel-foot"><span id="country-region-note"></span></div>
-        </section>
-        <section class="panel scatter-panel" aria-labelledby="country-scatter-title">
-          <div class="panel-head"><div><span class="panel-no">02</span><h2 id="country-scatter-title">Employment and earnings</h2></div></div>
-          <div class="chart"><svg id="country-scatter-svg" role="group" aria-label="Employment versus earnings. Choose a dot or drag to select institutions."></svg></div>
-          <div class="panel-foot"><span>Drag to select · Click a dot to select a school</span><span id="country-scatter-note"></span></div>
-        </section>
-        <section class="panel programs-panel country-program-panel" aria-labelledby="country-program-title">
-          <div class="panel-head">
-            <div><span class="panel-no">03</span><h2 id="country-program-title">Program size and earnings</h2></div>
-            <select id="country-program-view" aria-label="Country program chart view">
-              <option value="mix">Size and earnings</option><option value="income">Income ranges</option>
-            </select>
-          </div>
-          <div class="program-controls">
-            <select id="country-school" aria-label="Country institution"></select>
-            <select id="country-field" aria-label="Country field"></select>
-          </div>
-          <div class="program-summary">
-            <span id="country-program-count"></span>
-            <div class="country-earnings-key" aria-label="Earnings color scale">
-              <span>Median</span><i class="program-gradient" id="country-earnings-gradient"></i><span id="country-earnings-max"></span>
-            </div>
-          </div>
-          <div class="chart"><svg id="country-programs-svg" role="group" aria-label="Fields of study and earnings. Choose a field to filter."></svg></div>
-          <div class="panel-foot"><span id="country-program-note"></span></div>
-        </section>
-        <section class="panel industry-pay-panel country-market-panel" aria-labelledby="country-market-title">
-          <div class="panel-head">
-            <div><span class="panel-no">04</span><h2 id="country-market-title">Industry pay benchmarks</h2></div>
-            <div id="country-market-mode" role="group" aria-label="Country market view">
-              <button type="button" data-country-mode="pay">Pay growth</button>
-              <button type="button" data-country-mode="hiring">Hiring demand</button>
-            </div>
-          </div>
-          <div class="industry-pay-controls">
-            <span id="country-market-scope"></span>
-            <label class="cohort-control"><span>Graduates</span><select id="country-period" aria-label="Country period"></select></label>
-          </div>
-          <div id="country-market-legend" aria-label="Market series"></div>
-          <div class="chart"><svg id="country-market-svg" role="group" aria-label="Industry pay growth and CPI, or hiring demand"></svg></div>
-        </section>
-      </main>
-      <section class="selection-bar" aria-label="Current selection and country">
-        <div id="us-selection">
+      <section class="selection-bar" aria-label="Current selection">
+        <div>
           <span class="selection-indicator"></span
           ><b id="selection-count" aria-live="polite">In view: 1,725 institutions</b
           ><nav id="scope-trail" aria-label="Current scope and program"></nav><span id="selection-description" class="sr-only" aria-live="polite"></span
           ><button id="clear-selection" class="text-button" hidden>Clear choices ×</button>
         </div>
-        <div id="country-selection" class="country-selection" hidden>
-          <span id="country-active-scope" aria-live="polite"></span><small id="country-release"></small>
-        </div>
-        <nav id="country-picker" class="country-picker" aria-label="Select country"></nav>
       </section>
     </div>
     <div id="tooltip" role="tooltip" hidden></div>

@@ -38,7 +38,6 @@ document.addEventListener('pointerdown',()=>{keyboardInteraction=false;});
 document.addEventListener('keydown',(event)=>{
   keyboardInteraction=true;
   if(event.key==='Escape') {
-    if(getElement('us-dashboard')?.hidden){hideTooltip();return;}
     if(!getElement('tooltip').hidden){const owner=document.querySelector('[aria-controls="tooltip"][aria-expanded="true"]');hideTooltip();owner?.focus();return;}
     if(document.activeElement.matches('input,select'))return;
     if(mapFocus.division)mapFocus.division=null;

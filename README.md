@@ -25,27 +25,6 @@ The Graduates menu keeps three representative groups: 2019–21 graduates one ye
 - Pay growth and CPI comparison: 2023 Q1–2026 Q1. The missing CPI quarter is connected without adding an observation.
 - Hiring demand: Indeed indices through October 23, 2026.
 
-## Countries
-
-Use the selector at the bottom right. All three views use a clickable map,
-linked scatterplot, program treemap, and market line chart with Pay growth and
-Hiring demand. Great Britain provider data come from DfE LEO, tax year 2023–24.
-Australian outcomes use the pooled 2023–25 domestic undergraduate QILT
-ComparED survey. UK and Australian scatterplots compare employment and
-earnings, using the published local measures. UK industry shares are national
-field benchmarks. Australia’s national industry curves use ABS WPI, with
-survey response counts as the treemap area.
-
-Map values are medians of published institution medians. UK boundaries use
-ONS ITL1 (contains Ordnance Survey data © Crown copyright and database right
-2025). Australian boundaries are from ABS ASGS Edition 4. UK wage growth uses
-ONS EARN03. Both market charts stop at their last common wage and CPI quarter.
-Job postings use Indeed Hiring Lab national and regional indices (CC BY 4.0).
-
-See the [graduate outcome sources](provenance/international-sources.json) and
-[map and market sources](provenance/country-map-market.json) for input hashes.
-The scripts in tools/ prepare the bundled data from the listed extracts.
-
 ## Run and edit
 
 The published files are in **`docs/`**. Open `docs/index.html` locally or serve it:
