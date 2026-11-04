@@ -1,12 +1,11 @@
 /* Program composition follows the active geographic/institution scope.
- * Counts sum across schools. Income percentiles remain school-specific. */
+ * Tile area shows awards. Color shows a school median or a U.S. field benchmark. */
 "use strict";
 const PROGRAMS = window.SCHOOL_PROGRAM_DATA;
 const FINE_INCOME = { labels: EARNINGS.labels.fine };
 const programState = { view:"mix", grain:"2", fine:null, page:0, school:null, scope:null };
 const programColor = d3.scaleSequential(sequentialColor(COLORS.income)).domain([0,150000]).clamp(true);
 function programFamilies() { return state.pseoField==='all'?[]:[state.pseoField]; }
-const programShareColor = d3.scaleSequential(sequentialColor(COLORS.share)).domain([0,.30]).clamp(true);
 function resolveProgramScope() {
   const schools=filteredInstitutions.filter(matchesAcademicSelection);
   const explicitSchool=state.scatter?.size===1 && schools.length===1 ? schools[0] : null;
@@ -25,10 +24,12 @@ function programScopeRows(scope) {
   }
   return [...counts].map(([code,count])=>{
     const income=scope.school?lookupEarnings(scope.school,code,state.pseoSnapshot):null;
+    const benchmark=scope.school?null:NATIONAL_FIELD_EARNINGS.groups[NATIONAL_FIELD_EARNINGS.familyGroup[code.slice(0,2)]];
+    const median=income?.values[1]??benchmark?.median??null;
     return {code,count,share:total?count/total:0,
       name:programState.grain==='2'?PSEO.labels.fields[code]||`CIP ${code}`:FINE_INCOME.labels[code]||`CIP ${code}`,
       short:programState.grain==='2'?fieldNames[code]||`CIP ${code}`:FINE_INCOME.labels[code]||`CIP ${code}`,
-      values:income?.values||[null,null,null],status:income?.status[0]||(scope.school?'unavailable':'not_pooled')};
+      values:income?.values||[null,null,null],median,benchmark:benchmark||null,status:income?.status[0]||(benchmark?'benchmark':'unavailable')};
   }).sort((a,b)=>b.count-a.count||a.code.localeCompare(b.code));
 }
 function schoolProgramRows(id) {
@@ -36,7 +37,8 @@ function schoolProgramRows(id) {
   return school?programScopeRows({schools:[school],school:id}):[];
 }
 function programTileColor(row) {
-  return programState.scope?.school ? (hasNumber(row.values[1])?programColor(row.values[1]):row.status==='suppressed'?'url(#program-suppressed)':'#ffffff') : programShareColor(row.share);
+  if (hasNumber(row.median)) return programColor(row.median);
+  return row.status==='suppressed'?'url(#program-suppressed)':COLORS.programMissing;
 }
 function programIsSelected(row) {
   return programState.grain === "4" && programState.fine ? row.code === programState.fine : programFamilies().includes(row.code.slice(0,2));
@@ -59,7 +61,10 @@ function programTooltip(row, scope) {
       ?tooltipRow('Median / year',currency(row.values[1]))+tooltipRow('P25–P75',`${currency(row.values[0])}–${currency(row.values[2])}`)
       :tooltipRow('Income',row.status==='suppressed'?'Suppressed':'N/A');
     html+=`<div class="tip-muted">${cohortLabel(state.pseoSnapshot)} · ${META.pseoDollarYear} USD</div>`;
-  }else html+=`<div class="tip-muted">Awards ${META.awardYear}</div>`;
+  }else if(row.benchmark){
+    html+=tooltipRow('U.S. benchmark / year',currency(row.benchmark.median))
+      + '<div class="tip-muted">'+escapeHtml(row.benchmark.label)+' · ACS 2025</div>';
+  }else html+=tooltipRow('U.S. benchmark','N/A');
   return html;
 }
 function renderSchoolPrograms() {
@@ -74,17 +79,19 @@ function renderSchoolPrograms() {
   if(picker.dataset.scopeKey!==pickerKey){picker.dataset.scopeKey=pickerKey;picker.innerHTML=`<option value="">${escapeHtml(parentLabel)}</option>`+filteredInstitutions.map((r)=>`<option value="${r.id}">${escapeHtml(schoolSearchLabel(r))}</option>`).join('');}
   picker.value=scope.school||'';picker.title=school?schoolSearchLabel(school):parentLabel;
   const viewControl=getElement('program-view');
-  viewControl.querySelector('[value="mix"]').textContent=school?'Size and earnings':'Program composition';
+  viewControl.querySelector('[value="mix"]').textContent='Size and earnings';
   viewControl.querySelector('[value="income"]').disabled=!school;
-  viewControl.title=school?'Choose program composition or income intervals':'Income intervals require one school; aggregated school medians are not valid percentiles.';
+  viewControl.title=school?'Choose program composition or income intervals':'Color shows the U.S. ACS field benchmark. Select one school for its PSEO earnings and income intervals.';
   viewControl.value=programState.view;
   getElement('program-grain').value=programState.grain;
-  getElement('programs-title').textContent=school?'School program size and earnings':`${scope.name} · program composition`;
+  getElement('programs-title').textContent=school?'School program size and earnings'
+    :scope.kind==='national'?'Program size and earnings':scope.name+' · program size and earnings';
+  getElement('program-award-year').textContent=META.awardYear;
   getElement('programs-title').title=`${scope.name} · ${scope.schools.length} institutions in scope`;
   getElement('program-color-key').hidden=programState.view!=='mix';
-  getElement('program-color-key').dataset.metric=school?'income':'share';
-  getElement('program-color-key').innerHTML=school?'Median <span class="program-gradient"></span> $0–150k+ <i class="suppressed-key"></i>Supp. <i class="unpublished-key"></i>Not pub.':'Award share <span class="program-gradient"></span> 0–30%+';
-  setColorLegend(".program-gradient", school ? programColor : programShareColor);
+  getElement('program-color-key').dataset.metric=school?'income':'national-income';
+  getElement('program-color-key').innerHTML=school?'Median <span class="program-gradient"></span> $0–150k+ <i class="suppressed-key"></i>Supp. <i class="unpublished-key"></i>Not pub.':'U.S. median <span class="program-gradient"></span> $0–150k+ <i class="unmatched-key"></i>No data';
+  setColorLegend(".program-gradient", programColor);
   getElement('program-pages').hidden=programState.view!=='income';
   const rows=programScopeRows(scope),total=d3.sum(rows,(r)=>r.count);
   const empty=getElement('programs-empty');empty.hidden=!!rows.length;
@@ -101,8 +108,10 @@ function renderSchoolPrograms() {
   item.innerHTML='<option value="all">All fields / programs</option>'+rows.map((r)=>`<option value="${r.code}">${escapeHtml(r.short)} (${numberFormat.format(r.count)})</option>`).join('');
   if(selectedRows.length===1)item.value=selectedRows[0].code;
   else if(selectedRows.length>1){item.add(new Option(`${selectedRows.length} linked programs`,'linked'));item.value='linked';}
-  getElement('program-source-note').textContent=school?(programState.view==='mix'?`Awards ${META.awardYear} · color: median`:'P25–P75 · dot: median · right: awards'):'Area: awards · color: share';
-  getElement('program-link-note').textContent=school?`Year ${state.pseoSnapshot.split(':')[1]} · ${META.pseoDollarYear} USD${programState.fine?' · CIP '+programState.fine:''}`:`IPEDS ${META.awardYear}`;
+  getElement('program-source-note').textContent=programState.view==='income'?'P25–P75 · median dot':'';
+  const incomeNote=getElement('program-link-note');
+  incomeNote.title=school?'': 'ACS 2025 · U.S. ages 25–64 with earnings and a bachelor’s degree or higher. Colors use the related ACS broad field.';
+  incomeNote.textContent=school?`Year ${state.pseoSnapshot.split(':')[1]} · ${META.pseoDollarYear} USD${programState.fine?' · CIP '+programState.fine:''}` :'U.S. all fields: '+currency(NATIONAL_FIELD_EARNINGS.allFields)+'/yr';
   const pages=Math.max(1,Math.ceil(rows.length/6));programState.page=Math.min(programState.page,pages-1);
   getElement('program-page').textContent=`${programState.page+1}/${pages}`;
   getElement('program-prev').disabled=programState.page===0;getElement('program-next').disabled=programState.page>=pages-1;
@@ -111,11 +120,11 @@ function renderSchoolPrograms() {
   window.schoolProgramAudit={school:scope.school,scope:{kind:scope.kind,name:scope.name,ids:[...scope.ids],schoolCount:scope.schools.length,awardSchools:scope.awardSchools},
     view:programState.view,grain:programState.grain,total,selected:selectedRows.map((r)=>r.code),families:[...programFamilies()],snapshot:state.pseoSnapshot,
     sum:d3.sum(rows,(r)=>r.count),rows:rows.map((r)=>({...r,values:[...r.values]})),page:programState.page,
-    colorMetric:school?'School PSEO median':'Share of selected-scope awards',population:'Selected institution sample; first-major bachelor’s awards'};
+    colorMetric:school?'School PSEO median':'U.S. ACS field earnings benchmark',population:'Selected institution sample; first-major bachelor’s awards'};
 }
 function bindProgramEvents(selection, school) {
   return selection.attr("role","button").attr("tabindex",0).attr("data-code",(r)=>r.code)
-    .attr("aria-label",(r)=>`${r.name}: ${r.count} awards, ${(r.share*100).toFixed(1)} percent. ${hasNumber(r.values[1])?'P25 '+currency(r.values[0])+', median '+currency(r.values[1])+', P75 '+currency(r.values[2]):r.status==='not_pooled'?'Select a school for income':'Earnings '+r.status}. Select program.`)
+    .attr("aria-label",(r)=>`${r.name}: ${r.count} awards, ${(r.share*100).toFixed(1)} percent. ${hasNumber(r.values[1])?'P25 '+currency(r.values[0])+', median '+currency(r.values[1])+', P75 '+currency(r.values[2]):r.benchmark?'U.S. benchmark '+currency(r.benchmark.median)+', '+r.benchmark.label:'Earnings '+r.status}. Select program.`)
     .on("click",(_,r)=>chooseSchoolProgram(r.code))
     .on("keydown",(event,r)=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();chooseSchoolProgram(r.code);}})
     .on("mousemove",(event,r)=>showTooltip(event,programTooltip(r,school))).on("mouseleave",hideTooltip);
@@ -132,8 +141,8 @@ function drawProgramTreemap({svg,w,h}, rows, school) {
   cells.append("rect").attr("class","program-tile-base").attr("x",(r)=>r.box.x0).attr("y",(r)=>r.box.y0)
     .attr("width",(r)=>r.box.x1-r.box.x0).attr("height",(r)=>r.box.y1-r.box.y0).attr("rx",2)
     .attr("fill",programTileColor)
-    .attr("stroke",(r)=>school.school&&!hasNumber(r.values[1])&&r.status!=="suppressed"?COLORS.unpublished:"none")
-    .attr("stroke-dasharray",(r)=>school.school&&!hasNumber(r.values[1])&&r.status!=="suppressed"?"3 2":null)
+    .attr("stroke",(r)=>!hasNumber(r.median)&&r.status!=="suppressed"?COLORS.unpublished:"none")
+    .attr("stroke-dasharray",(r)=>!hasNumber(r.median)&&r.status!=="suppressed"?"3 2":null)
     .attr("stroke-width",1);
   for (const [stroke,width] of [["#ffffff",5],[COLORS.selected,2.2]]) {
     cells.filter(programIsSelected).append("rect").attr("class","program-selection-outline")
@@ -145,16 +154,46 @@ function drawProgramTreemap({svg,w,h}, rows, school) {
     .attr("x",(r)=>r.box.x0+2).attr("y",(r)=>r.box.y0+2)
     .attr("width",(r)=>Math.max(0,r.box.x1-r.box.x0-4)).attr("height",(r)=>Math.max(0,r.box.y1-r.box.y0-4))
     .attr("rx",2).attr("fill","none").attr("pointer-events","none");
+  // Measure the current face instead of estimating a fixed width per letter.
+  const measure = document.createElement('canvas').getContext('2d');
+  const font = getComputedStyle(svg.node()).fontFamily;
   cells.each(function(r){
-    const width=r.box.x1-r.box.x0,height=r.box.y1-r.box.y0;
-    if(width<50||height<27)return;
-    const tileColor=programTileColor(r);
-    const fill=tileColor.startsWith('url')?COLORS.ink:readableColor(tileColor);
-    const max=Math.max(4,Math.floor((width-10)/5.4));
-    const text=d3.select(this).append("text").attr("x",r.box.x0+6).attr("y",r.box.y0+14).attr("fill",fill).attr("font-size",10).attr("pointer-events","none");
-    text.append("tspan").text(r.short.length>max?r.short.slice(0,max-1)+'…':r.short);
-    if(height>=40)text.append("tspan").attr("x",r.box.x0+6).attr("dy",14).text(width<80?d3.format('.3~s')(r.count):`${d3.format('.3~s')(r.count)} · ${(100*r.share).toFixed(1)}%`);
-    if(school.school&&height>=57&&width>75)text.append("tspan").attr("x",r.box.x0+6).attr("dy",14).text(hasNumber(r.values[1])?`${currency(r.values[1])} median`:r.status==='suppressed'?'Income suppressed':'Income unavailable');
+    const width = r.box.x1 - r.box.x0, height = r.box.y1 - r.box.y0;
+    if (height < 10 || width < 6) return;
+    const compact = width < 50 || height < 27;
+    const fontSize = compact ? 8 : 10;
+    const inset = compact ? 2 : 6;
+    const room = width - 2 * inset;
+    measure.font = fontSize + 'px ' + font;
+
+    // Find the longest prefix that fits on one line.
+    let low = 0, high = r.short.length;
+    while (low < high) {
+      const length = Math.ceil((low + high) / 2);
+      if (measure.measureText(r.short.slice(0, length)).width <= room) low = length;
+      else high = length - 1;
+    }
+    if (!low) return;
+
+    const tileColor = programTileColor(r);
+    const fill = tileColor.startsWith('url') ? COLORS.ink : readableColor(tileColor);
+    const text = d3.select(this).append('text')
+      .attr('x',r.box.x0 + inset).attr('y',r.box.y0 + (compact ? Math.min(10, height - 2) : 14))
+      .attr('fill',fill).attr('font-size',fontSize).attr('pointer-events','none');
+    text.append('tspan').text(r.short.slice(0, low).trimEnd());
+    if (compact) return;
+
+    const count = d3.format('.3~s')(r.count);
+    const share = count + ' · ' + (100 * r.share).toFixed(1) + '%';
+    if (height >= 40 && measure.measureText(count).width <= room) {
+      text.append('tspan').attr('x',r.box.x0 + inset).attr('dy',14)
+        .text(measure.measureText(share).width <= room ? share : count);
+    }
+    const earnings = hasNumber(r.median) ? currency(r.median) + '/yr'
+      : r.status === 'suppressed' ? 'Suppressed' : 'Income N/A';
+    if (height >= 57 && measure.measureText(earnings).width <= room) {
+      text.append('tspan').attr('x',r.box.x0 + inset).attr('dy',14).text(earnings);
+    }
   });
 }
 function drawProgramIntervals({svg,w,h}, rows, school) {

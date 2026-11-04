@@ -25,7 +25,7 @@ selected school IDs, or null for the whole population. All four charts read the
 same state when `requestRender()` updates the page.
 
 `state.pseoField` selects a broad field; `programState.fine` optionally selects
-a detailed program. The three `GRADUATE_SNAPSHOTS` control published program
+a detailed program. Treemap area represents awards. In multi-school scopes, color uses a related U.S. broad-field earnings benchmark from 2025 ACS B15013. Single-school colors and intervals use published PSEO income. The three `GRADUATE_SNAPSHOTS` control published program
 income and historical destination weights. Destination-map clicks highlight a
 work region without changing the origin population.
 

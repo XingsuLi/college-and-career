@@ -10,7 +10,7 @@ window.SOURCE_META = {
   "annualEnd": 2025,
   "quarterLatest": "2026-Q1",
   "mapPeriods": {
-    "net_price": "Annual cost after aid 2024\u201325",
+    "net_price": "Annual cost after aid · 2024–2025",
     "earnings_10yr": "Earnings 2022/23 \u00b7 2024 USD",
     "completion_rate": "Fall 2019 entrants \u00b7 150% time",
     "federal_debt": "Debt FY2024\u201325"
@@ -71,6 +71,47 @@ window.SOURCE_META = {
       "sha256": "e13ca9e871424b09b609fd7e9b47eee488ed8504b5ad070272a8ee9f107f4c2d",
       "quarter_latest": "2026-Q3",
       "missing": "2025 Q4 remains null; visual line connects adjacent observed quarters without a missing-quarter node"
+    },
+    {
+      "source": "BLS OEWS national industry wage medians",
+      "url": "https://www.bls.gov/oes/2025/may/oessrci.htm",
+      "api": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+      "reference_period": "May 2025",
+      "population": "U.S. private sector, all occupations in each published sector",
+      "measure": "Published annual wage median (datatype 13)",
+      "all_private_industries_series": "OEUN000000000000100000013",
+      "series_by_naics": {
+        "11": "OEUN000000011--1200000013",
+        "21": "OEUN000000021--2200000013",
+        "22": "OEUN000000022--2300000013",
+        "23": "OEUN000000023--2400000013",
+        "31-33": "OEUN000000031--3400000013",
+        "42": "OEUN000000042--4300000013",
+        "44-45": "OEUN000000044--4600000013",
+        "48-49": "OEUN000000048--5000000013",
+        "51": "OEUN000000051--5200000013",
+        "52": "OEUN000000052--5300000013",
+        "53": "OEUN000000053--5400000013",
+        "54": "OEUN000000054--5500000013",
+        "55": "OEUN000000055--5600000013",
+        "56": "OEUN000000056--5700000013",
+        "61": "OEUN000000061--6200000013",
+        "62": "OEUN000000062--6300000013",
+        "71": "OEUN000000071--7200000013",
+        "72": "OEUN000000072--7300000013",
+        "81": "OEUN000000081--8200000013"
+      },
+      "response_sha256": "ccaaa19533d033db699e6cee1d03953d6d7c90825e12cf5be12e951616063fca"
+    },
+    {
+      "source": "Census ACS 2025 national field earnings",
+      "table": "B15013",
+      "url": "https://www2.census.gov/programs-surveys/acs/summary_file/2025/table-based-SF/data/1YRData/acsdt1y2025-b15013.dat",
+      "reference_period": "2025 ACS 1-year",
+      "population": "U.S. adults age 25\u201364 with earnings and a bachelor\u2019s degree or higher",
+      "geography": "0100000US",
+      "all_fields_variable": "B15013_001E",
+      "sha256": "a3b138109bd430fee060d045898d439755a1e6bfd205634eb71db2a90e675a7e"
     }
   ],
   "rawAnnualStart": 2015,

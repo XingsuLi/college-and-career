@@ -44,15 +44,16 @@ GitHub Pages publishes the `docs/` folder. Commit and push changes to update the
 
 - [College Scorecard](https://collegescorecard.ed.gov/data/)
 - [IPEDS](https://nces.ed.gov/ipeds/use-the-data/download-access-database)
+- [ACS 2025 field earnings benchmarks](https://data.census.gov/table/ACSDT1Y2025.B15013)
 - [Census PSEO](https://lehd.ces.census.gov/data/pseo_documentation.html)
-- [BLS QCEW](https://www.bls.gov/cew/) and [CPI](https://www.bls.gov/cpi/)
+- [BLS QCEW](https://www.bls.gov/cew/), [CPI](https://www.bls.gov/cpi/), and [May 2025 OEWS industry wage medians](https://www.bls.gov/oes/2025/may/oessrci.htm)
 - [Indeed Hiring Lab Job Postings Tracker](https://github.com/hiring-lab/job_postings_tracker), CC BY 4.0; snapshot transformed to weekly observations.
 - D3 and map geometry: licenses retained in `docs/vendor/`.
 
 Source periods and hashes are in `docs/source-manifest.js` and [provenance/](provenance/).
 
 
-The header's **Data sources** button opens six primary source links. The
+The header's **Data sources** button opens primary source links. The
 graduate-destination KPI, page footer and lower market-chart notes are removed.
 Quarter ticks and years remain visible in the fixed four-panel layout.
 

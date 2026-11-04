@@ -62,10 +62,10 @@ function matchesAcademicSelection(institution) {
   if (state.scatter !== null && !state.scatter.has(institution.id)) return false;
   return true;
 }
-function filterInstitutions() {
+function filterInstitutions(region = state.region) {
   return institutions.filter(
     (r) =>
-      (state.region === "all" || r.state === state.region) &&
+      (region === "all" || r.state === region) &&
       (state.type === "all" || r.type === state.type) &&
       (state.size === "all" || r.sizeBand === state.size),
   );
@@ -98,6 +98,7 @@ function showTooltip(event, html, variant = "chart") {
   const el = getElement("tooltip");
   if (variant !== "notes") getElement("method-button")?.setAttribute("aria-expanded", "false");
   el.classList.toggle("data-notes", variant === "notes");
+  el.classList.toggle("market-tooltip", variant === "market");
   el.setAttribute("role","tooltip");
   el.removeAttribute("aria-label");
   el.removeAttribute("tabindex");
@@ -212,9 +213,6 @@ function render() {
 function renderMap() {
   const workRegions = state.mapMetric === "employment";
   getElement("map-title").textContent = workRegions ? "Where graduates go" : "Cost across the map";
-  document.querySelector(".map-panel .panel-foot > span").textContent = workRegions
-    ? "Highlight a destination · other views keep their origin scope"
-    : "Click a state to filter; click again to clear";
   if (workRegions) {
     renderEmploymentMap();
     return;
@@ -284,8 +282,12 @@ function renderMap() {
     .attr("aria-label", (f) => `${f.properties.name}: ${metricInfo[key].label} ${formatMetric(key,values.get(f.properties.abbr))}. Activate to select this state.`)
     .attr("aria-pressed", (f) => String(state.region === f.properties.abbr))
     .attr("fill", fill)
+    .on("mouseenter", (_, f) => hoverOutline.attr("d", path(f)))
     .on("mousemove", tooltip)
-    .on("mouseleave", hideTooltip)
+    .on("mouseleave", () => {
+      hoverOutline.attr("d", null);
+      hideTooltip();
+    })
     .on("click", (_, f) => choose(f))
     .on("keydown", (e, f) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -300,6 +302,8 @@ function renderMap() {
       .attr("d", path).attr("fill", "none").attr("stroke", stroke)
       .attr("stroke-width", width / scale).attr("pointer-events", "none");
   }
+  // Paint the full boundary above neighboring states without intercepting hits.
+  const hoverOutline = g.append("path").attr("class", "map-hover-outline");
   for (const f of features) {
     const s = f.properties.abbr;
     if (["CA", "TX", "NY", "FL", "WA", "IL", "CO", "AK", "HI"].includes(s) || s === state.region) {
@@ -327,7 +331,7 @@ function renderMap() {
       .attr("cy", y)
       .attr("r", 4 / scale)
       .attr("fill", "#fff")
-      .attr("stroke", "#326c4f")
+      .attr("stroke", "#623681")
       .attr("stroke-width", 1 / scale)
       .attr("role", "button")
       .attr("tabindex", 0)
@@ -344,7 +348,7 @@ function renderMap() {
   getElement("map-max").textContent = formatAxisTick(key, hi);
   getElement("map-insight").textContent =
     state.region === "all" ? "50 STATES + DC" : stateNames[state.region];
-  getElement("map-foot").textContent = `${META.mapPeriods[state.mapMetric]} · unweighted medians`;
+  getElement("map-foot").textContent = META.mapPeriods[state.mapMetric];
 }
 // Unweighted ordinary least squares: one institution, one observation.
 // Centered sums avoid subtracting large raw currency sums.
@@ -361,20 +365,75 @@ function fitCollegeRegression(rows) {
   const r2=yy>0?Math.max(0,Math.min(1,1-residualSum/yy)):null;
   return {available:true,n,slope,intercept,r2,residualSum,totalSum:yy,xExtent:d3.extent(data,(r)=>r.metrics.net_price)};
 }
-function regressionTooltip(fit) {
-  if(!fit.available)return '<strong>Trend line unavailable</strong>';
-  const change=(fit.slope<0?'−':'+')+currency(Math.abs(fit.slope*1000));
-  return '<strong>Trend line</strong>'+tooltipRow('Schools',numberFormat.format(fit.n))+tooltipRow('Per $1,000 annual cost',change);
+const fittedEarnings = (fit, price) => fit.intercept + fit.slope * price;
+
+function regressionTooltip(trend) {
+  const { fit, name } = trend;
+  const title = '<strong>' + escapeHtml(name) + '</strong>';
+  if (!fit.available) return title + '<div>' + escapeHtml(fit.reason) + '</div>';
+  const change = (fit.slope < 0 ? '−' : '+') + currency(Math.abs(fit.slope * 1000));
+  return title + tooltipRow('Schools', numberFormat.format(fit.n))
+    + tooltipRow('Per $1,000 annual cost', change);
 }
+
+// Draw both fits within their observed cost ranges, with labels outside the brush.
+function drawScatterTrends(svg, trends, x, y, m, w, h) {
+  const right = w - m.r, bottom = h - m.b;
+  svg.append('defs').append('clipPath').attr('id','scatter-regression-clip').append('rect')
+    .attr('x',m.l).attr('y',m.t).attr('width',right-m.l).attr('height',bottom-m.t);
+  const labels = trends.map((trend) => {
+    const { fit, extent } = trend;
+    if (!extent) return { trend, labelY: bottom - 5 };
+    const [low, high] = extent;
+    const endY = y(fittedEarnings(fit, high));
+    svg.append('line').attr('class','scatter-regression-line trend-' + trend.key)
+      .attr('clip-path','url(#scatter-regression-clip)')
+      .attr('x1',x(low)).attr('x2',x(high))
+      .attr('y1',y(fittedEarnings(fit, low))).attr('y2',endY)
+      .attr('pointer-events','none');
+    return { trend, endX: x(high), endY, labelY: endY + 3 };
+  }).sort((a,b) => a.labelY - b.labelY);
+
+  for (const label of labels) label.labelY = Math.max(m.t + 10, Math.min(bottom - 5, label.labelY));
+  if (labels.length === 2 && labels[1].labelY - labels[0].labelY < 16) {
+    labels[1].labelY = Math.min(bottom - 5, labels[0].labelY + 16);
+    labels[0].labelY = labels[1].labelY - 16;
+  }
+  for (const { trend, endX, endY, labelY } of labels) {
+    if (trend.extent && trends.length > 1) {
+      svg.append('line').attr('class','scatter-trend-leader trend-' + trend.key)
+        .attr('x1',endX).attr('y1',endY).attr('x2',right + 4).attr('y2',labelY - 3)
+        .attr('pointer-events','none');
+    }
+    svg.append('text').attr('id',trend.key === 'national' && trends.length > 1 ? 'scatter-trend-label-us' : 'scatter-trend-label')
+      .attr('class','scatter-regression-label trend-' + trend.key)
+      .attr('x',right + 8).attr('y',labelY)
+      .attr('tabindex',0).attr('role','img')
+      .attr('aria-label',trend.name + (trend.fit.available ? '' : ': ' + trend.fit.reason))
+      .text(trend.label + (trend.fit.available ? '' : ' · N/A'))
+      .on('mousemove',(event) => showTooltip(event,regressionTooltip(trend)))
+      .on('mouseleave',hideTooltip);
+  }
+}
+
 // 5. SCATTERPLOT: scales -> axes -> data-bound circles -> brush
 // x/y convert data values into pixels. invert() converts brush pixels back to values.
 function renderScatter(paired) {
-  const regression=fitCollegeRegression(paired);
-  window.scatterRegressionAudit={...regression,scope:{state:state.region,type:state.type,size:state.size},weighting:'Equal weight per institution',fitScope:'Global institution filters; highlights do not refit'};
+  const regression = fitCollegeRegression(paired);
+  const hasState = state.region !== 'all';
+  // Compare like-for-like: the national fit ignores only the state filter.
+  const national = hasState ? fitCollegeRegression(filterInstitutions('all')) : regression;
+  const trends = hasState ? [
+    { key: 'state', label: 'Trend line (' + state.region + ')', name: 'Trend line (' + stateNames[state.region] + ')', fit: regression },
+    { key: 'national', label: 'Trend line (U.S.)', name: 'Trend line (U.S.)', fit: national },
+  ] : regression.available ? [
+    { key: 'national', label: 'Trend line', name: 'Trend line (U.S.)', fit: national },
+  ] : [];
+  window.scatterRegressionAudit = {...regression, national, scope: {state: state.region, type: state.type, size: state.size},
+    weighting: 'Equal weight per institution', fitScope: 'Global institution filters; highlights do not refit'};
   const { svg, w, h } = createChart("scatter-svg"),
-    m = { l: 62, r: 84, t: 25, b: 39 },
-    pw = w - m.l - m.r,
-    ph = h - m.t - m.b;
+    m = { l: 62, r: hasState ? 117 : 84, t: 25, b: 39 },
+    pw = w - m.l - m.r;
   const x = d3
     .scaleLinear()
     .domain([
@@ -383,11 +442,17 @@ function renderScatter(paired) {
     ])
     .nice()
     .range([m.l, w - m.r]);
-  const y = d3
-    .scaleLinear()
-    .domain([0, d3.max(paired, (r) => r.metrics.earnings_10yr) || 120000])
-    .nice()
-    .range([h - m.b, m.t]);
+  const [xMin, xMax] = x.domain();
+  const plottedEarnings = [0, d3.max(paired, (r) => r.metrics.earnings_10yr) || 120000];
+  for (const trend of trends) {
+    if (!trend.fit.available) continue;
+    const low = Math.max(xMin, trend.fit.xExtent[0]);
+    const high = Math.min(xMax, trend.fit.xExtent[1]);
+    if (low > high) continue;
+    trend.extent = [low, high];
+    if (hasState) plottedEarnings.push(fittedEarnings(trend.fit, low), fittedEarnings(trend.fit, high));
+  }
+  const y = d3.scaleLinear().domain(d3.extent(plottedEarnings)).nice().range([h - m.b, m.t]);
   const size = d3
     .scaleSqrt()
     .domain([0, d3.max(institutions, (r) => r.metrics.undergrad_size)])
@@ -411,7 +476,7 @@ function renderScatter(paired) {
   svg
     .append("text")
     .attr("class", "axis-label")
-    .attr("x", m.l)
+    .attr("x", m.l - 40)
     .attr("y", 12)
     .text("Earnings 10 years after entry · 2024 USD");
   svg
@@ -453,26 +518,9 @@ function renderScatter(paired) {
       .attr("text-anchor", labelOnLeft ? "end" : "start")
       .text("Sample median");
   }
-  // Draw the benchmark behind the points and clip it to the plotting rectangle.
-  if(regression.available){
-    svg.append('defs').append('clipPath').attr('id','scatter-regression-clip').append('rect')
-      .attr('x',m.l).attr('y',m.t).attr('width',pw).attr('height',ph);
-    svg.append('line').attr('class','scatter-regression-line').attr('clip-path','url(#scatter-regression-clip)')
-      .attr('x1',x(regression.xExtent[0])).attr('x2',x(regression.xExtent[1]))
-      .attr('y1',y(regression.intercept+regression.slope*regression.xExtent[0]))
-      .attr('y2',y(regression.intercept+regression.slope*regression.xExtent[1]))
-      .attr('pointer-events','none');
-    // Label the visible right end; the reserved margin keeps it off the points.
-    const fittedRight = regression.intercept + regression.slope * regression.xExtent[1];
-    const labelValue = Math.max(y.domain()[0], Math.min(y.domain()[1], fittedRight));
-    svg.append('text').attr('id','scatter-trend-label').attr('class','scatter-regression-label')
-      .attr('x',w-m.r+8)
-      .attr('y',Math.max(m.t+10,Math.min(h-m.b-5,y(labelValue)+3)))
-      .attr('tabindex',0).attr('role','img').attr('aria-label','Trend line')
-      .text('Trend line')
-      .on('mousemove',(event)=>showTooltip(event,regressionTooltip(regression)))
-      .on('mouseleave',hideTooltip);
-  }
+  const dotRadius = (row) => hasNumber(row.metrics.undergrad_size) ? size(row.metrics.undergrad_size) : 2.5;
+  svg.classed("scatter-hovering", false);
+  if (trends.length) drawScatterTrends(svg, trends, x, y, m, w, h);
   svg
     .append("g")
     .selectAll("circle") // Larger circles go behind smaller circles.
@@ -484,7 +532,7 @@ function renderScatter(paired) {
     .attr("data-id", (r) => r.id)
     .attr("cx", (r) => x(r.metrics.net_price))
     .attr("cy", (r) => y(r.metrics.earnings_10yr))
-    .attr("r", (r) => (hasNumber(r.metrics.undergrad_size) ? size(r.metrics.undergrad_size) : 2.5))
+    .attr("r", dotRadius)
     .attr("fill", (r) => types[r.type].color)
     .attr("opacity", (r) =>
       hasSelection() ? (selectedInstitutionIds.has(r.id) ? 0.88 : 0.09) : 0.50,
@@ -493,6 +541,19 @@ function renderScatter(paired) {
   if(state.scatter?.size===1){
     const school=paired.find((row)=>state.scatter.has(row.id));
     if(school)drawSchoolFocus(svg,school,x,y,size,m,w,h);
+  }
+  const hoverDot = svg.append("circle").attr("class", "scatter-hover-dot").attr("display", "none");
+  let hoveredId = null;
+  function showHoveredPoint(row) {
+    const id = row?.id ?? null;
+    if (id === hoveredId) return;
+    hoveredId = id;
+    svg.classed("scatter-hovering", !!row);
+    hoverDot.attr("display", row ? null : "none");
+    if (row) {
+      hoverDot.attr("cx", x(row.metrics.net_price)).attr("cy", y(row.metrics.earnings_10yr))
+        .attr("r", Math.max(6, dotRadius(row) + 2.5)).attr("fill", types[row.type].color);
+    }
   }
   let dragStart = null;
   const brush = d3
@@ -503,6 +564,7 @@ function renderScatter(paired) {
     ])
     .on("start", (e) => {
       if (e.sourceEvent) {
+        showHoveredPoint(null);
         hideTooltip();
         dragStart = d3.pointer(e.sourceEvent, svg.node());
       }
@@ -569,18 +631,31 @@ function renderScatter(paired) {
   }
   bg.on("mousemove.tooltip", (e) => {
     if (e.buttons) {
+      showHoveredPoint(null);
       hideTooltip();
       return;
     }
     const pointer=d3.pointer(e,svg.node()),r=nearestPoint(pointer);
+    showHoveredPoint(r);
     if(r)showTooltip(e,institutionTooltip(r));
-    else if(regression.available){
-      const price=x.invert(pointer[0]),fitted=regression.intercept+regression.slope*price;
-      if(price>=regression.xExtent[0]&&price<=regression.xExtent[1]&&Math.abs(pointer[1]-y(fitted))<=6)
-        showTooltip(e,regressionTooltip(regression));
+    else {
+      const price = x.invert(pointer[0]);
+      let nearestTrend = null, distance = 6;
+      for (const trend of trends) {
+        if (!trend.extent || price < trend.extent[0] || price > trend.extent[1]) continue;
+        const gap = Math.abs(pointer[1] - y(fittedEarnings(trend.fit, price)));
+        if (gap <= distance) {
+          nearestTrend = trend;
+          distance = gap;
+        }
+      }
+      if (nearestTrend) showTooltip(e, regressionTooltip(nearestTrend));
       else hideTooltip();
-    }else hideTooltip();
-  }).on("mouseleave.tooltip", hideTooltip);
+    }
+  }).on("mouseleave.tooltip", () => {
+    showHoveredPoint(null);
+    hideTooltip();
+  });
   getElement("scatter-count").textContent = hasSelection()
     ? `${numberFormat.format(paired.filter((r) => selectedInstitutionIds.has(r.id)).length)} / ${numberFormat.format(paired.length)} points`
     : `${numberFormat.format(paired.length)} points`;
@@ -611,7 +686,7 @@ function drawSchoolFocus(svg,school,x,y,size,m,w,h) {
   focus.append('rect').attr('class','school-focus-card').attr('x',bx).attr('y',by).attr('width',boxW).attr('height',boxH)
     .attr('rx',5).attr('fill','#fffffff5').attr('stroke',COLORS.selected).attr('stroke-width',1);
   const title=focus.append('text').attr('class','school-focus-name').attr('x',bx+9).attr('y',by+15)
-    .attr('fill','#244c3a').attr('font-size',11).attr('font-weight',650).text(school.name);
+    .attr('fill','#38214c').attr('font-size',11).attr('font-weight',650).text(school.name);
   let label=school.name;
   while(title.node().getComputedTextLength()>boxW-18&&label.length>4){label=label.slice(0,-1);title.text(label+'…');}
   title.append('title').text(school.name);
@@ -695,24 +770,6 @@ getElement("reset").addEventListener("click", () => {
   hideTooltip();
   requestRender();
 });
-function exploreSchoolFlows(id, field = "all") {
-  Object.assign(state, {
-    region: "all",
-    type: "all",
-    size: "all",
-    mapMetric: "net_price",
-    pseoField: field,
-  });
-  resetSelection();
-  state.scatter = new Set([id]);
-  getElement("school-search").value = institutions.find((s) => s.id === id)?.name || "";
-  requestRender();
-}
-getElement("story-button").addEventListener("click", () => {
-  state.pseoSnapshot = META.defaultSnapshot;
-  exploreSchoolFlows("196097", "11");
-  toast(`Stony Brook computing · ${cohortLabel(state.pseoSnapshot)}`);
-});
 GRADUATE_SNAPSHOTS.forEach((key) =>
   getElement("pseo-snapshot").add(new Option(cohortLabel(key,true), key)),
 );
@@ -729,7 +786,9 @@ const dataSources = [
   ["College Scorecard", "https://collegescorecard.ed.gov/data/"],
   ["IPEDS", "https://nces.ed.gov/ipeds/"],
   ["Census PSEO", "https://lehd.ces.census.gov/data/pseo_documentation.html"],
+  ["Census ACS · Field earnings", "https://data.census.gov/table/ACSDT1Y2025.B15013"],
   ["BLS · Industry pay", "https://www.bls.gov/cew/"],
+  ["BLS · Median industry wages", "https://www.bls.gov/oes/2025/may/oessrci.htm"],
   ["BLS · Consumer prices", "https://www.bls.gov/cpi/"],
   ["Indeed Hiring Lab", "https://github.com/hiring-lab/job_postings_tracker"],
 ];

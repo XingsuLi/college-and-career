@@ -6,44 +6,44 @@
 const HIRING = window.HIRING_DATA;
 // Fixed identities; related roles shown together always use distinct colors.
 const HIRING_ROLE_COLORS = {
-  "Software Development": "#3d6fa8",
-  "Data & Analytics": "#2e8b72",
-  "IT Systems & Solutions": "#a5548b",
-  "Banking & Finance": "#3d6fa8",
-  "Electrical Engineering": "#2e8b72",
-  "Marketing": "#2e8b72",
-  "Medical Technician": "#3d6fa8",
-  "Therapy": "#2e8b72",
-  "Accounting": "#a5548b",
-  "Aviation": "#3d6fa8",
-  "Childcare": "#3d6fa8",
-  "Civil Engineering": "#3d6fa8",
-  "Community & Social Service": "#a5548b",
-  "Driving": "#2e8b72",
-  "Human Resources": "#3d6fa8",
-  "IT Infrastructure, Operations & Support": "#3d6fa8",
-  "Industrial Engineering": "#3d6fa8",
-  "Installation & Maintenance": "#2e8b72",
-  "Logistic Support": "#a5548b",
-  "Management": "#2e8b72",
-  "Mechanical Engineering": "#a5548b",
-  "Media & Communications": "#3d6fa8",
-  "Nursing": "#a5548b",
-  "Production & Manufacturing": "#a5548b",
-  "Project Management": "#a5548b",
-  "Scientific Research & Development": "#a5548b",
-  "Arts & Entertainment": "#2e8b72",
-  "Education & Instruction": "#2e8b72",
-  "Food Preparation & Service": "#3d6fa8",
-  "Hospitality & Tourism": "#2e8b72",
-  "Insurance": "#2e8b72",
-  "Architecture": "#3d6fa8",
-  "Construction": "#3d6fa8",
-  "Dental": "#3d6fa8",
-  "Legal": "#3d6fa8",
-  "Pharmacy": "#3d6fa8",
-  "Security & Public Safety": "#3d6fa8",
-  "Social Science": "#3d6fa8"
+  "Software Development": "#315fa6",
+  "Data & Analytics": "#177b84",
+  "IT Systems & Solutions": "#a44439",
+  "Banking & Finance": "#315fa6",
+  "Electrical Engineering": "#177b84",
+  "Marketing": "#177b84",
+  "Medical Technician": "#315fa6",
+  "Therapy": "#177b84",
+  "Accounting": "#a44439",
+  "Aviation": "#315fa6",
+  "Childcare": "#315fa6",
+  "Civil Engineering": "#315fa6",
+  "Community & Social Service": "#a44439",
+  "Driving": "#177b84",
+  "Human Resources": "#315fa6",
+  "IT Infrastructure, Operations & Support": "#315fa6",
+  "Industrial Engineering": "#315fa6",
+  "Installation & Maintenance": "#177b84",
+  "Logistic Support": "#a44439",
+  "Management": "#177b84",
+  "Mechanical Engineering": "#a44439",
+  "Media & Communications": "#315fa6",
+  "Nursing": "#a44439",
+  "Production & Manufacturing": "#a44439",
+  "Project Management": "#a44439",
+  "Scientific Research & Development": "#a44439",
+  "Arts & Entertainment": "#177b84",
+  "Education & Instruction": "#177b84",
+  "Food Preparation & Service": "#315fa6",
+  "Hospitality & Tourism": "#177b84",
+  "Insurance": "#177b84",
+  "Architecture": "#315fa6",
+  "Construction": "#315fa6",
+  "Dental": "#315fa6",
+  "Legal": "#315fa6",
+  "Pharmacy": "#315fa6",
+  "Security & Public Safety": "#315fa6",
+  "Social Science": "#315fa6"
 };
 const hiringState = { focus: null };
 const hiringDates = HIRING.dates.map(d3.utcParse("%Y-%m-%d"));
@@ -90,7 +90,7 @@ function hiringSeries(selection) {
     label: name + " · U.S.",
     short: hiringShortNames[name] || name,
     kind: "occupation",
-    color: HIRING_ROLE_COLORS[name] || "#3d6fa8",
+    color: HIRING_ROLE_COLORS[name] || "#315fa6",
     values: HIRING.sectors[name],
     dash: null,
   }));
@@ -101,7 +101,7 @@ function hiringSeries(selection) {
       label: "United States · all jobs",
       short: "U.S. · all jobs",
       kind: "national",
-      color: "#6e7a73",
+      color: "#626b71",
       values: HIRING.national,
       dash: "3 3",
     },
@@ -113,7 +113,7 @@ function hiringSeries(selection) {
       label: (stateNames[selection.region] || selection.region) + " · all jobs",
       short: selection.region + " · all jobs",
       kind: "state",
-      color: COLORS.selected,
+      color: "#99651f",
       values: HIRING.states[selection.region],
       dash: "7 3",
     });
@@ -125,7 +125,7 @@ function renderHiringDemand() {
   const series = hiringSeries(selection);
   if (!series.some((row) => row.code === hiringState.focus)) hiringState.focus = null;
   const latestLabel = hiringDateLabel(hiringDates.at(-1));
-  getElement("industry-pay-title").textContent = "Hiring demand · Indeed";
+  getElement("industry-pay-title").textContent = "Hiring demand";
   getElement("pseo-snapshot").value = state.pseoSnapshot;
   document.querySelector(".cohort-control > span").textContent = "Graduates";
   getElement("pseo-snapshot").title =
@@ -142,14 +142,15 @@ function renderHiringDemand() {
     ? `${selection.field}${broader} · related U.S. roles`
     : selection.family
       ? `${selection.field} · overall references only`
-      : "Overall hiring · select a program for related roles";
+      : "";
   getElement("industry-pay-scope").title =
     `${selection.scope?.name || "United States"} · ${selection.field}`;
+  getElement("industry-coverage-line").removeAttribute("title");
   getElement("industry-coverage-line").textContent = selection.related.length
     ? `National occupations · ${latestLabel}${selection.region ? ` · ${selection.region} reference = all jobs` : ""}`
     : selection.family
       ? `No reviewed role mapping · ${latestLabel}${selection.region ? ` · ${selection.region} all jobs` : " · U.S. all jobs"}`
-      : `All-job references · ${latestLabel}${selection.region ? ` · ${selection.region} and U.S.` : " · United States"}`;
+      : "";
   getElement("industry-pay-empty").hidden = true;
   getElement("industry-pay-svg").setAttribute(
     "aria-label",
@@ -252,7 +253,7 @@ function drawHiringDemand({ svg, w, h }, series) {
     .attr("x2", w - m.r)
     .attr("y1", y(100))
     .attr("y2", y(100))
-    .attr("stroke", "#c3ccc5")
+    .attr("stroke", "#d4dadd")
     .attr("stroke-dasharray", "3 4");
   const opacity = (row) => (!hiringState.focus || row.code === hiringState.focus ? 1 : 0.18);
   const groups = svg
@@ -332,7 +333,7 @@ function drawHiringDemand({ svg, w, h }, series) {
       .attr("x2", (i) => x(hiringDates[i]))
       .attr("y1", m.t)
       .attr("y2", h - m.b)
-      .attr("stroke", "#bbc6bd")
+      .attr("stroke", "#c5cdd0")
       .attr("stroke-dasharray", "3 3");
     cursor
       .selectAll("circle")
@@ -348,7 +349,7 @@ function drawHiringDemand({ svg, w, h }, series) {
       row.kind === "occupation" ? row.short + " · US" : row.short,
       hasNumber(row.values[week]) ? hiringIndex(row.values[week]) : "N/A",
     )).join("");
-    showTooltip(event, `<strong>Hiring index · ${hiringDateLabel(hiringDates[week])}</strong>${rows}<div class="tip-muted">Feb 2020 = 100</div>`);
+    showTooltip(event, `<strong>Hiring index · ${hiringDateLabel(hiringDates[week])}</strong>${rows}<div class="tip-muted">Feb 2020 = 100</div>`, "market");
     window.hiringHoverAudit = {
       date: HIRING.dates[week],
       values: series.map((row) => [row.code, row.values[week]]),

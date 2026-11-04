@@ -4,11 +4,27 @@
 "use strict";
 const DESTINATIONS = window.INDUSTRY_DESTINATIONS;
 const industryPayState = { mode:"pay-growth", focus:null };
+const MARKET_REFERENCE = "#626b71";
 const QUARTERLY = window.QUARTERLY_PAY;
 // Compare wages and CPI only over their shared published period.
 const PAY_COMPARISON_END = [QUARTERLY.latest, QUARTERLY.cpiLatest].sort()[0];
 const WIDTH_PER_SHARE = 18; // Fixed scale: 10% -> 1.8px, 20% -> 3.6px, 40% -> 7.2px.
 const signedPercent = (value) => d3.format('+.1f')(value)+'%';
+function industryMedian(row) {
+  const median = window.INDUSTRY_WAGE_MEDIANS[row.code];
+  return hasNumber(median) ? currency(median) + '/yr' : 'N/A';
+}
+function industryMedianRow(row) {
+  return tooltipRow('U.S. private-sector median', industryMedian(row))
+    + '<div class="tip-muted">BLS OEWS · May 2025</div>';
+}
+function showIndustryLegendTooltip(event, row, total) {
+  if (row.reference) return;
+  showTooltip(event, '<strong>' + escapeHtml(row.label) + '</strong>'
+    + tooltipRow('Graduate share', numberFormat.format(row.count) + '/' + numberFormat.format(total)
+      + ' · ' + (100 * row.share).toFixed(1) + '%')
+    + industryMedianRow(row), "market");
+}
 function selectedIndustryComposition() {
   const scope=programState.scope,school=scope?.school||null;
   const families=programFamilies(),counts=new Map();let contributors=0;
@@ -79,7 +95,13 @@ function renderIndustryPay() {
   const shortField=families.length===0?'All fields':familyLabel;
   getElement('industry-pay-scope').textContent=scope?.ids.length?`${school?'':scopeLabel+' · '}${shortField}${programState.fine?' (broader flow field)':''}`:'No schools in this scope';
   getElement('industry-pay-scope').title=scope?`${scope.name} · ${familyLabel} · ${cohortLabel(state.pseoSnapshot)}`:'';
-  getElement('industry-coverage-line').textContent=`PSEO: ${numberFormat.format(contributors)} of ${numberFormat.format(scope?.ids.length||0)} schools · ${numberFormat.format(total)} published employment counts`;
+  const focused = top.find((row) => row.code === industryPayState.focus);
+  const coverage = getElement('industry-coverage-line');
+  coverage.title = 'PSEO: ' + numberFormat.format(contributors) + ' of '
+    + numberFormat.format(scope?.ids.length||0) + ' schools · ' + numberFormat.format(total) + ' published employment counts';
+  coverage.textContent = focused
+    ? focused.short + ' · U.S. private-sector median ' + industryMedian(focused) + ' · May 2025'
+    : '';
   const available=top.filter((row)=>row.available),covered=d3.sum(available,(row)=>row.share),topShare=d3.sum(top,(row)=>row.share);
   const latestCPI=cpiPoints().filter((point)=>hasNumber(point.value)).at(-1);
   const legendRows=[...top,{code:'cpi',label:'CPI inflation',short:'CPI inflation',reference:true,available:!!latestCPI}];
@@ -91,15 +113,19 @@ function renderIndustryPay() {
     .attr('data-code',(row)=>row.code)
     .attr('disabled',(row)=>!row.available||null)
     .attr('aria-pressed',(row)=>String(industryPayState.focus===row.code))
-    .attr('title',(row)=>row.reference
-      ? 'CPI inflation'
-      : `${row.label} · Share: ${row.count}/${total} · ${(100*row.share).toFixed(1)}%${row.available?'':' · Pay: N/A'}`)
+    .attr('aria-label',(row) => row.reference ? row.label :
+      row.label + ', graduate share ' + (100 * row.share).toFixed(1) + '%. U.S. private-sector median '
+      + industryMedian(row) + ', May 2025.')
     .html((row)=>{
-      const color=row.reference?COLORS.reference:row.available?industryColor(row.code):'#b6bcb8';
+      const color=row.reference?MARKET_REFERENCE:row.available?industryColor(row.code):'#b8c1c5';
       const width=row.reference?1.8:WIDTH_PER_SHARE*row.share;
       const value=row.reference?'':(100*row.share).toFixed(1)+'%';
       return `<span>${escapeHtml(row.short)}${row.available?'':' · N/A'}</span><b><i style="border-top:${width}px ${row.reference?'dashed':'solid'} ${color}"></i>${value}</b>`;
     })
+    .on('pointerenter',(event,row) => showIndustryLegendTooltip(event,row,total))
+    .on('pointerleave',hideTooltip)
+    .on('focus',(event,row) => showIndustryLegendTooltip(event,row,total))
+    .on('blur',hideTooltip)
     .on('click',(_,row)=>{industryPayState.focus=industryPayState.focus===row.code?null:row.code;hideTooltip();requestRender();});
   const reason=!scope?.ids.length?'No schools in this scope':!total?'No published employment destinations':!available.length?'No wage series for these employment sectors':null;
   getElement('industry-pay-empty').hidden=!reason;
@@ -119,7 +145,7 @@ function drawIndustryPay({svg,w,h},industries,composition) {
   const series=industries.map((row)=>({...row,points:payPoints(row.code)}));
   const cpi={code:'cpi',label:'CPI inflation',reference:true,share:null,points:cpiPoints()};
   series.push(cpi);
-  const stroke=(row)=>row.reference?COLORS.reference:industryColor(row.code);
+  const stroke=(row)=>row.reference?MARKET_REFERENCE:industryColor(row.code);
   const width=(row)=>row.reference?1.8:WIDTH_PER_SHARE*row.share;
   const values=series.flatMap((s)=>s.points.map((p)=>p.value)).filter(hasNumber);
   const dataExtent=d3.extent(series.flatMap((s)=>s.points),(p)=>p.x);
@@ -133,7 +159,7 @@ function drawIndustryPay({svg,w,h},industries,composition) {
     .call(d3.axisLeft(y).ticks(h<160?3:4).tickSize(-(w-m.l-m.r)).tickFormat(''));
   svg.append('line').attr('class','pay-zero-baseline')
     .attr('x1',m.l).attr('x2',w-m.r).attr('y1',y(0)).attr('y2',y(0))
-    .attr('stroke','#c3ccc5').attr('stroke-dasharray','2 4').attr('stroke-width',1);
+    .attr('stroke','#d4dadd').attr('stroke-dasharray','2 4').attr('stroke-width',1);
   const line=d3.line().defined((p)=>hasNumber(p.value)).x((p)=>x(p.x)).y((p)=>y(p.value));
   // Connect observed CPI quarters directly; absent quarters get no point.
   const plottedPoints=(row)=>row.reference?row.points.filter((p)=>hasNumber(p.value)):row.points;
@@ -230,9 +256,9 @@ function attachIndustryPointer(svg,groups,series,x,y,m,w,h,composition,opacity) 
     groups.attr('opacity',(other)=>other.reference||other.code===row.code?1:.15);
     cursor.selectAll('circle').data([point]).join('circle')
       .attr('cx',(p)=>x(p.x)).attr('cy',(p)=>y(p.value)).attr('r',4.5)
-      .attr('fill','white').attr('stroke',row.reference?COLORS.reference:industryColor(row.code)).attr('stroke-width',2);
+      .attr('fill','white').attr('stroke',row.reference?MARKET_REFERENCE:industryColor(row.code)).attr('stroke-width',2);
     const share=row.reference?'':tooltipRow('Share',`${numberFormat.format(row.count)}/${numberFormat.format(composition.total)} · ${(100*row.share).toFixed(1)}%`);
-    showTooltip(event,`<strong>${escapeHtml(row.label)}</strong>${detail}${share}`);
+    showTooltip(event,`<strong>${escapeHtml(row.label)}</strong>${detail}${share}${row.reference ? '' : industryMedianRow(row)}`, "market");
     window.industryHoverAudit={code:row.code,kind,period:point.label,shownPeriods:[point.label],missingPeriods:[],distancePixels:current.distance};
   }
   svg.append('rect').attr('class','industry-pay-pointer-surface')

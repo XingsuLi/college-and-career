@@ -10,36 +10,45 @@
       name="description"
       content="Compare U.S. colleges and majors. Explore costs, earnings and hiring trends in four linked views."
     />
-    <link rel="stylesheet" href="styles.css?v=fca2adb3f8" />
+    <link rel="stylesheet" href="styles.css?v=1afface65b" />
     <script defer src="vendor/d3.min.js"></script>
-    <script defer src="colors.js"></script>
+    <script defer src="colors.js?v=bc0c1b9249"></script>
     <script defer src="states.js"></script>
     <script defer src="data.js"></script>
     <script defer src="pseo-data.js"></script>
-    <script defer src="employment.js"></script>
+    <script defer src="employment.js?v=81110b77c9"></script>
     <script defer src="school-program-data.js"></script>
     <script defer src="graduate-earnings-data.js"></script>
-    <script defer src="source-manifest.js?v=0c88228fed"></script>
+    <script defer src="source-manifest.js?v=244c70d436"></script>
     <script defer src="ui-state.js"></script>
-    <script defer src="app.js?v=4ba218f7bd"></script>
-    <script defer src="program-income.js"></script>
+    <script defer src="app.js?v=bddcd81aac"></script>
+    <script defer src="program-income.js?v=c2c6bcb487"></script>
     <script defer src="industry-destinations-data.js"></script>
-    <script defer src="industry-pay-data.js"></script>
+    <script defer src="industry-pay-data.js?v=8d34817bdb"></script>
     <script defer src="cpi-data.js"></script>
     <script defer src="quarterly-pay-data.js"></script>
     <script defer src="hiring-data.js"></script>
-    <script defer src="industry-pay.js?v=6b0996926f"></script>
-    <script defer src="hiring.js?v=ddb970a7d2"></script>
-    <script defer src="school-programs.js?v=4d2ad84e85"></script>
+    <script defer src="industry-pay.js?v=fdefdadc19"></script>
+    <script defer src="hiring.js?v=3e3da78718"></script>
+    <script defer src="school-programs.js?v=26b785ad07"></script>
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <a class="brand" href="#" aria-label="College and Career home"
-          ><span class="brand-symbol">c<span>↗</span></span
-          >College<span class="brand-light">&amp; Career</span
-          ><span class="brand-caption">U.S. COLLEGE DATA</span></a
-        >
+        <div class="brand-group">
+          <a class="brand" href="#" aria-label="College and Career home">
+            <span class="brand-symbol" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none" focusable="false">
+                <path d="M6.5 10.5c3.5-.3 6.7.9 9.5 3.1v10.2c-2.8-2.2-6-3.4-9.5-3.1zM16 23.8c2.8-2.2 6-3.4 9.5-3.1v-5.8"
+                  stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+                <path d="m18 12 6.5-6.5m-4.3 0h4.3v4.3"
+                  stroke="#f4d5ff" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="brand-name">College &amp; Career</span>
+          </a>
+          <span class="brand-caption">Explore costs, earnings and hiring trends.</span>
+        </div>
         <div class="top-actions">
           <span class="source-badge"><i></i> ONLINE</span
           ><button id="method-button" class="quiet">Data sources <span>↗</span></button
@@ -53,24 +62,6 @@
           </button>
         </div>
       </header>
-      <section class="overview" aria-label="Overview">
-        <div class="intro">
-          <h1>Compare colleges and majors.</h1>
-          <p>
-            Explore costs, earnings and hiring trends.
-          </p>
-        </div>
-        <div class="kpis">
-          <div class="kpi">
-            <span>Colleges in view</span><strong id="kpi-total">1,725</strong
-            ><small>Bachelor’s main campuses</small>
-          </div>
-          <div class="kpi">
-            <span>With cost &amp; earnings</span><strong id="kpi-paired">88.1<span>%</span></strong
-            ><small id="pair-note">1,520 / 1,725 institutions</small>
-          </div>
-        </div>
-      </section>
       <section class="toolbar" aria-label="Global filters">
         <div class="segmented" aria-label="Institution type">
           <button class="active" data-type="all" aria-pressed="true">All types</button
@@ -97,9 +88,28 @@
             <option value="Unknown">Unknown size</option>
           </select></label
         >
+        <div class="school-search">
+          <label class="sr-only" for="school-search">Find institution</label
+          ><input
+            id="school-search"
+            list="school-options"
+            placeholder="Find institution…"
+            autocomplete="off"
+          /><datalist id="school-options"></datalist
+          ><button id="open-school" class="text-button">Select</button>
+        </div>
         <div class="toolbar-spacer"></div>
-        <button id="story-button" class="story-button">↗ Stony Brook demo</button
-        ><button
+      <div class="kpis">
+        <div class="kpi">
+          <span>Colleges in view</span><strong id="kpi-total">1,725</strong
+          ><small>Bachelor’s main campuses</small>
+        </div>
+        <div class="kpi">
+          <span>With cost &amp; earnings</span><strong id="kpi-paired">88.1<span>%</span></strong
+          ><small id="pair-note">1,520 / 1,725 institutions</small>
+        </div>
+      </div>
+        <button
           id="reset"
           class="reset-button"
           title="Restore all institutions and default charts"
@@ -137,8 +147,7 @@
             <div id="map-insight" class="map-insight"></div>
           </div>
           <div class="panel-foot">
-            <span>Click a state to filter; click again to clear</span
-            ><span id="map-foot">Institution medians · Unweighted</span>
+            <span id="map-foot">Annual cost after aid · 2024–2025</span>
           </div>
         </section>
         <section class="panel scatter-panel" aria-labelledby="scatter-title">
@@ -147,7 +156,7 @@
               <span class="panel-no">02</span>
               <h2 id="scatter-title">Cost and long-term earnings</h2>
             </div>
-            <span class="mini-badge" id="scatter-count">1,520 points</span>
+            <span class="sr-only" id="scatter-count" aria-live="polite"></span>
           </div>
           <div class="chart">
             <svg
@@ -174,7 +183,7 @@
           </div>
         </section>
         <section class="panel programs-panel" aria-labelledby="programs-title">
-          <div class="panel-head"><div><span class="panel-no">03</span><h2 id="programs-title">School program size and earnings</h2></div>
+          <div class="panel-head"><div><span class="panel-no">03</span><h2 id="programs-title">Program size and earnings</h2><span id="program-award-year"></span></div>
             <select id="program-view" aria-label="School program chart view"><option value="mix">Size and earnings</option><option value="income">Income ranges</option></select></div>
           <div class="program-controls">
             <select id="program-school" aria-label="School for program comparison"></select>
@@ -205,16 +214,6 @@
           ><b id="selection-count" aria-live="polite">In view: 1,725 institutions</b
           ><nav id="scope-trail" aria-label="Current scope and program"></nav><span id="selection-description" class="sr-only" aria-live="polite"></span
           ><button id="clear-selection" class="text-button" hidden>Clear choices ×</button>
-        </div>
-        <div class="school-search">
-          <label for="school-search">Find institution</label
-          ><input
-            id="school-search"
-            list="school-options"
-            placeholder="e.g. Stony Brook"
-            autocomplete="off"
-          /><datalist id="school-options"></datalist
-          ><button id="open-school" class="text-button">Select</button>
         </div>
       </section>
     </div>

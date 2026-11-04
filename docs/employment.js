@@ -201,5 +201,5 @@ function renderEmploymentMap() {
     d3.max([...employment.divisions.values()]) || 0,
   );
   getElement("map-insight").textContent = "9 CENSUS DIVISIONS";
-  getElement("map-foot").textContent = `Destination highlight only · ${cohortLabel(state.pseoSnapshot)}`;
+  getElement("map-foot").textContent = `${cohortLabel(state.pseoSnapshot)}`;
 }

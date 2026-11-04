@@ -1,22 +1,23 @@
 /* Shared visual meanings. Category colors stay fixed when filters change. */
 "use strict";
 const COLORS = {
-  ink: "#18332e",
-  muted: "#5c6b63",
-  secondary: "#627168",
-  selected: "#b5701a",
-  selectedFill: "#fbefdc",
-  reference: "#56625c",
-  missing: "#eef0ec",
-  hatch: "#8f9c95",
-  unpublished: "#aab4ae",
-  public: "#2e876b",
-  nonprofit: "#587fa9",
-  profit: "#c48d43",
-  map: ["#eef3e8", "#c3dbc6", "#8dbca3", "#4f9479", "#1f6650"],
+  ink: "#21192b",
+  muted: "#56505f",
+  secondary: "#645d70",
+  selected: "#a13878",
+  selectedFill: "#f9eaf4",
+  reference: "#655d70",
+  missing: "#eeecf1",
+  hatch: "#8b8397",
+  unpublished: "#aba3b4",
+  public: "#177b84",
+  nonprofit: "#3d63ad",
+  profit: "#b0732c",
+  map: ["#f2ebfa", "#dec9f4", "#bf9ae8", "#9360cc", "#5e2d97"],
   destinations: ["#f1edf6", "#d4c9e5", "#ab98cc", "#8066ad", "#593f86"],
   share: ["#eef2f5", "#cfdbe5", "#a7bed1", "#7a9cb8", "#4f7597"],
-  income: ["#e8f2cf", "#bfe0b5", "#7cc2a9", "#3f97a6", "#255f86"],
+  income: ["#f8edf9", "#eacbf0", "#ce97dc", "#a55bbb", "#64277b"],
+  programMissing: "#dcd8e2",
 };
 const sequentialColor = (stops) => d3.piecewise(d3.interpolateLab, stops);
 
@@ -47,8 +48,8 @@ function desaturateColor(fill) {
 // NAICS identities, not ranks: an industry never changes color on filtering.
 const INDUSTRY_COLORS = {
   "11": "#537346", "21": "#805858", "22": "#526e8c", "23": "#a84d3b",
-  "31-33": "#5b54a0", "42": "#965b83", "44-45": "#c0653a", "48-49": "#317788",
-  "51": "#285c58", "52": "#a5548b", "53": "#94624d", "54": "#3d6fa8",
-  "55": "#645b8c", "56": "#7a6446", "61": "#6b5fa8", "62": "#2e8b72",
-  "71": "#ab546a", "72": "#756a43", "81": "#536e68", "92": "#626b77",
+  "31-33": "#3e6591", "42": "#8f5a34", "44-45": "#b0682d", "48-49": "#317788",
+  "51": "#215e70", "52": "#a44439", "53": "#94624d", "54": "#315fa6",
+  "55": "#526f7b", "56": "#7a6446", "61": "#4e7739", "62": "#177b84",
+  "71": "#a4563c", "72": "#756a43", "81": "#536e68", "92": "#626b77",
 };
