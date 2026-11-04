@@ -12,7 +12,6 @@ import zipfile
 from collections import defaultdict
 from datetime import date
 from pathlib import Path
-from urllib.parse import parse_qs, urlsplit
 
 raw = Path(sys.argv[1])
 repo = Path(__file__).resolve().parents[1]
@@ -61,18 +60,16 @@ def hiring(code, view):
             day = row["date"]
             if row["variable"] == "total postings" and day >= "2023-01-01" and date.fromisoformat(day).weekday() == 4:
                 tracks["National"].append([day, float(row["indeed_job_postings_index_SA"])])
-    # The French file mixes regional code systems; keep the national reference.
-    if code != "FR":
-        with (raw / regional).open() as stream:
-            for row in csv.DictReader(stream):
-                day = row["date"]
-                if day >= "2023-01-01" and date.fromisoformat(day).weekday() == 4:
-                    label = row["region"].upper() if code == "AU" else row["region"].replace(" & ", " and ")
-                    tracks[label].append([day, float(row["indeed_job_postings_index"])])
+    with (raw / regional).open() as stream:
+        for row in csv.DictReader(stream):
+            day = row["date"]
+            if day >= "2023-01-01" and date.fromisoformat(day).weekday() == 4:
+                label = row["region"].upper() if code == "AU" else row["region"].replace(" & ", " and ")
+                tracks[label].append([day, float(row["indeed_job_postings_index"])])
     assert tracks["National"]
     view["hiring"] = dict(tracks)
     view["sources"].append(["Indeed Hiring Lab · job postings (CC BY 4.0)", indeed])
-    return [national] if code == "FR" else [national, regional]
+    return [national, regional]
 
 
 uk_release = "https://explore-education-statistics.service.gov.uk/find-statistics/graduate-labour-market-outcomes-leo/2023-24/explore"
@@ -87,7 +84,7 @@ with zipfile.ZipFile(raw / "uk-leo.zip") as archive, archive.open("provider_data
         sid, period, field = row["ukprn"], row["YAG"], row["cah2_code"]
         if row["tax_year"] != "2023/2024" or row["sex"] != "Total" or not sid.isdigit() or period not in gb["rows"]:
             continue
-        region = row["provider_region_name"].replace(" & ", " and ")
+        region = row["provider_region_name"].replace(" & ", " and ").replace("and The", "and the")
         if region == "Total":
             region = row["provider_country_name"]
         sid = sid + ":" + row["provider_region_code"]
@@ -111,27 +108,6 @@ with (raw / "uk-industry.csv").open(encoding="utf-8-sig") as stream:
                 [row["section_name"], number(row["count"]), number(row["earnings_median"])])
 evidence("GB", ["uk-leo.zip", "uk-industry.csv", *hiring("GB", gb)])
 
-fr_url = "https://data.enseignementsup-recherche.gouv.fr/explore/dataset/fr-esr-insersup/"
-fr = add("FR", "France", "€", "monthly net pay (FTE)", "Salaried employment in France (%)", "Leaver count",
-         "InserSup 2026 S1 · 2022 general bachelor’s cohort", "12",
-         [["MESRE · InserSup public data", fr_url]], "employment")
-fr["periods"] = [[str(n), f"{n} months after graduation"] for n in (6, 12, 18, 24, 30)]
-fr["rows"] = {key: [] for key, _ in fr["periods"]}
-for row in read_json("fr.json"):
-    sid, field = row["id_paysage_actuel"], row["diplome"]
-    if row["promo"] != ["2022"] or not field or not sid or row["reg_nom"] == "National":
-        continue
-    fr["schools"][sid] = [row["uo_lib_actuel"], row["reg_nom"]]
-    if field == "all":
-        field = ""
-    else:
-        fr["fields"][field] = row["libelle_diplome"].strip().capitalize()
-    for period in fr["rows"]:
-        values = [number(row[f"{key}_{period}"]) for key in
-                  ("nb_sortants", "salaire_q1", "salaire_q2", "salaire_q3", "tx_sortants_en_emploi_sal_fr")]
-        fr["rows"][period].append([sid, field, *values])
-evidence("FR", ["fr.json", *hiring("FR", fr)])
-
 au = add("AU", "Australia", "A$", "annual full-time salary", "Overall employment (%)", "Survey responses",
          "QILT ComparED · domestic undergraduate GOS 2023–25 pooled", "pooled",
          [["QILT · Graduate Outcomes Survey", "https://www.qilt.edu.au/surveys/graduate-outcomes-survey-%28gos%29"],
@@ -143,9 +119,12 @@ au["rows"] = {"pooled": []}
 def australian_row(record, field):
     undergraduate = record.get("undergraduate") or {}
     highlights = {r["alias"]: r for r in undergraduate.get("highlights") or []}
-    count = number(highlights.get("employment", {}).get("size"))
-    median = number(highlights.get("median-salary", {}).get("score"))
-    employment = number(highlights.get("employment", {}).get("score"))
+    employment_data = highlights.get("employment", {})
+    salary_data = highlights.get("median-salary", {})
+    count = number(employment_data.get("size")) or None
+    median = number(salary_data.get("score")) if (number(salary_data.get("size")) or 0) > 0 else None
+    median = median or None
+    employment = number(employment_data.get("score")) if count else None
     if count is None and median is None and employment is None:
         return
     sid = record["alias"]
@@ -169,71 +148,15 @@ for area in read_json("au-areas.json"):
         australian_row(row, field)
 evidence("AU", [*au_files, *hiring("AU", au)])
 
-sg_url = "https://data.gov.sg/datasets/d_3c55210de27fcccda2ed0c63fdd2b352/view"
-sg = add("SG", "Singapore", "S$", "gross monthly salary", "Overall employment (%)", "Published degrees",
-         "MOE Graduate Employment Survey · around six months after graduation", "2024",
-         [["MOE · Graduate Employment Survey", sg_url]], "earnings")
-sg["coursePoints"] = True
-sg["equalAreas"] = True
-sg["noRegions"] = True
-response = read_json("sg.json")["result"]
-assert len(response["records"]) == response["total"]
-for row in response["records"]:
-    sid, field, period = row["university"], row["degree"], row["year"]
-    sg["schools"][sid] = [sid, sid]
-    sg["fields"][field] = field
-    sg["rows"].setdefault(period, []).append([sid, field, None, *[number(row[key]) for key in
-        ("gross_mthly_25_percentile", "gross_monthly_median", "gross_mthly_75_percentile", "employment_rate_overall")]])
-sg["periods"] = [[year, year] for year in sorted(sg["rows"])]
-evidence("SG", ["sg.json"])
-
-
-pl = add("PL", "Poland", "PLN ", "monthly earnings", "First-year unemployment risk (%)", "Graduate count",
-         "ELA · Full-time first-cycle programmes · first year after graduation", "2024",
-         [["Polish Ministry of Science · ELA Graduate Tracking", "https://ela.nauka.gov.pl/en/major"],
-          ["ELA · data and methodology", "https://ela.nauka.gov.pl/en/experts/source-data"]], "earnings")
-pl["coursePoints"] = True
-pl["cohortTrend"] = True
-pl_files = []
-for year in ("2022", "2023", "2024"):
-    filename = f"pl-{year}.json"
-    pl_files.append(filename)
-    pl["periods"].append([year, year + " graduating cohort"])
-    pl["rows"][year] = []
-    for record in read_json(filename):
-        major = record["major"]
-        metric = major["majorData"]
-        query = parse_qs(urlsplit(major["links"][0]["link"]).query)
-        field, institution = query["major"][0], query["institution"][0]
-        region = major["voivodeship"]
-        sid = institution + ":" + region
-        pl["schools"][sid] = [record["institution"], region]
-        pl["fields"][field] = major["name"]
-        pl["rows"][year].append([sid, field, number(metric["graduatesNumber"]), None,
-            number(metric["totalSalary"]), None, number(metric["unemployedRisk"]), major["links"][0]["link"]])
-evidence("PL", pl_files)
-
 for code, view in country.items():
     for period, rows in view["rows"].items():
         unique = {}
         for row in rows:
-            key = tuple(row[:2]) if code != "PL" else (row[0], row[7])
-            if key in unique and unique[key] != row:
-                # GES sometimes republishes a degree under two schools. Keep the
-                # more complete row; discard conflicting equally complete cells.
-                assert code == "SG", (code, period, key)
-                previous = unique[key]
-                if previous is None:
-                    continue
-                present = sum(x is not None for x in row[2:])
-                previous_present = sum(x is not None for x in previous[2:])
-                if present == previous_present:
-                    unique[key] = None
-                elif present > previous_present:
-                    unique[key] = row
-            else:
-                unique[key] = row
-        view["rows"][period] = [r[:7] for r in unique.values() if r is not None]
+            key = tuple(row[:2])
+            if key in unique:
+                assert unique[key] == row, (code, period, key)
+            unique[key] = row
+        view["rows"][period] = list(unique.values())
     manifest[code]["rows_by_period"] = {key: len(rows) for key, rows in view["rows"].items()}
     default = view["rows"][view["default"]]
     manifest[code]["default_scope"] = {

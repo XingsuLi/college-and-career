@@ -378,9 +378,11 @@ function regressionTooltip(trend) {
 }
 
 // Draw both fits within their observed cost ranges, with labels outside the brush.
-function drawScatterTrends(svg, trends, x, y, m, w, h) {
+function drawScatterTrends(svg, trends, x, y, m, w, h, tooltipFor = regressionTooltip) {
   const right = w - m.r, bottom = h - m.b;
-  svg.append('defs').append('clipPath').attr('id','scatter-regression-clip').append('rect')
+  const labelId = svg.attr("id")==="scatter-svg" ? "scatter-trend-label" : "country-scatter-trend-label";
+  const clipId = svg.attr('id') + '-regression-clip';
+  svg.append('defs').append('clipPath').attr('id',clipId).append('rect')
     .attr('x',m.l).attr('y',m.t).attr('width',right-m.l).attr('height',bottom-m.t);
   const labels = trends.map((trend) => {
     const { fit, extent } = trend;
@@ -388,7 +390,7 @@ function drawScatterTrends(svg, trends, x, y, m, w, h) {
     const [low, high] = extent;
     const endY = y(fittedEarnings(fit, high));
     svg.append('line').attr('class','scatter-regression-line trend-' + trend.key)
-      .attr('clip-path','url(#scatter-regression-clip)')
+      .attr('clip-path','url(#' + clipId + ')')
       .attr('x1',x(low)).attr('x2',x(high))
       .attr('y1',y(fittedEarnings(fit, low))).attr('y2',endY)
       .attr('pointer-events','none');
@@ -406,13 +408,13 @@ function drawScatterTrends(svg, trends, x, y, m, w, h) {
         .attr('x1',endX).attr('y1',endY).attr('x2',right + 4).attr('y2',labelY - 3)
         .attr('pointer-events','none');
     }
-    svg.append('text').attr('id',trend.key === 'national' && trends.length > 1 ? 'scatter-trend-label-us' : 'scatter-trend-label')
+    svg.append('text').attr('id',trend.key === 'national' && trends.length > 1 ? labelId + "-us" : labelId)
       .attr('class','scatter-regression-label trend-' + trend.key)
       .attr('x',right + 8).attr('y',labelY)
       .attr('tabindex',0).attr('role','img')
       .attr('aria-label',trend.name + (trend.fit.available ? '' : ': ' + trend.fit.reason))
       .text(trend.label + (trend.fit.available ? '' : ' · N/A'))
-      .on('mousemove',(event) => showTooltip(event,regressionTooltip(trend)))
+      .on('mousemove',(event) => showTooltip(event,tooltipFor(trend)))
       .on('mouseleave',hideTooltip);
   }
 }
@@ -800,7 +802,8 @@ sourceButton.setAttribute("aria-haspopup", "dialog");
 sourceButton.addEventListener("click", (event) => {
   if (sourceButton.getAttribute("aria-expanded") === "true") { hideTooltip(); return; }
   const active = document.querySelector("#country-picker [aria-pressed=true]")?.dataset.country;
-  const sources = window.COUNTRY_VIEWS?.[active]?.sources || dataSources;
+  const countrySources = window.COUNTRY_VIEWS?.[active]?.sources;
+  const sources = countrySources ? [...countrySources, ...window.COUNTRY_PARITY[active].sources] : dataSources;
   const links = sources.map(([name, url]) =>
     `<a href="${url}" target="_blank" rel="noopener noreferrer">${name}<span aria-hidden="true">↗</span></a>`).join("");
   showTooltip(event, `<strong>Data sources</strong><nav class="source-links" aria-label="Data sources">${links}</nav>`, "notes");

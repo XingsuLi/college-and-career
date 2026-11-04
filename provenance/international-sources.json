@@ -34,37 +34,6 @@
       "institution_medians": 285
     }
   },
-  "FR": {
-    "sources": [
-      [
-        "MESRE · InserSup public data",
-        "https://data.enseignementsup-recherche.gouv.fr/explore/dataset/fr-esr-insersup/"
-      ],
-      [
-        "Indeed Hiring Lab · job postings (CC BY 4.0)",
-        "https://github.com/hiring-lab/job_postings_tracker"
-      ]
-    ],
-    "source_files": {
-      "fr.json": "976dd1d2d9f421282add2119ab8f2d43d1b42ec2c21fb410f333b25041f1a90e",
-      "aggregate_job_postings_FR.csv": "ec6a14c6fca87fe646063b87319fb59b418b959d1acc2eba4f835aaaee1b1613"
-    },
-    "institutions": 78,
-    "fields": 52,
-    "rows_by_period": {
-      "6": 506,
-      "12": 506,
-      "18": 506,
-      "24": 506,
-      "30": 506
-    },
-    "default_scope": {
-      "campuses": 78,
-      "program_cells": 428,
-      "program_medians": 152,
-      "institution_medians": 73
-    }
-  },
   "AU": {
     "sources": [
       [
@@ -107,79 +76,16 @@
       "aggregate_job_postings_AU.csv": "75a972c8974e3544b328814d15659ee534fb3331b4f4e92e91473783733b09d0",
       "regional_au.csv": "4e81038d7832f0864a297c55ca1a413d1d63552beb6ce2c81ed8da00788de9a3"
     },
-    "institutions": 159,
+    "institutions": 92,
     "fields": 21,
     "rows_by_period": {
-      "pooled": 1080
+      "pooled": 837
     },
     "default_scope": {
-      "campuses": 159,
-      "program_cells": 987,
-      "program_medians": 727,
+      "campuses": 92,
+      "program_cells": 745,
+      "program_medians": 490,
       "institution_medians": 58
-    }
-  },
-  "SG": {
-    "sources": [
-      [
-        "MOE · Graduate Employment Survey",
-        "https://data.gov.sg/datasets/d_3c55210de27fcccda2ed0c63fdd2b352/view"
-      ]
-    ],
-    "source_files": {
-      "sg.json": "f3ef09612d255a1e21d7affce293b7ca11bb458c914e7740ff9841dc7284b6c0"
-    },
-    "institutions": 6,
-    "fields": 422,
-    "rows_by_period": {
-      "2013": 85,
-      "2014": 109,
-      "2015": 123,
-      "2016": 121,
-      "2017": 132,
-      "2018": 137,
-      "2020": 139,
-      "2019": 140,
-      "2021": 135,
-      "2022": 141,
-      "2023": 133,
-      "2024": 147
-    },
-    "default_scope": {
-      "campuses": 6,
-      "program_cells": 147,
-      "program_medians": 141,
-      "institution_medians": 0
-    }
-  },
-  "PL": {
-    "sources": [
-      [
-        "Polish Ministry of Science · ELA Graduate Tracking",
-        "https://ela.nauka.gov.pl/en/major"
-      ],
-      [
-        "ELA · data and methodology",
-        "https://ela.nauka.gov.pl/en/experts/source-data"
-      ]
-    ],
-    "source_files": {
-      "pl-2022.json": "46d114a1ba7b3cfb2531c320d33e9032f72465f8d1d4805a5ef601d8707eb0b2",
-      "pl-2023.json": "c417e92a04fee9036f4df00878a9b526e9df45d7ee2f15d30c783d3dfac41a18",
-      "pl-2024.json": "574099dae5093ee0143cb946feec0eaacd9ab8ceee34f7d4bc7fc65f3d55bc9c"
-    },
-    "institutions": 351,
-    "fields": 802,
-    "rows_by_period": {
-      "2022": 2496,
-      "2023": 2442,
-      "2024": 2406
-    },
-    "default_scope": {
-      "campuses": 260,
-      "program_cells": 2406,
-      "program_medians": 2406,
-      "institution_medians": 0
     }
   }
 }
